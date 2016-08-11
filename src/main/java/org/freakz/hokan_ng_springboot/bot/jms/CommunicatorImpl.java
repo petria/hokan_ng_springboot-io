@@ -59,7 +59,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
           aliasMessage = message.replaceFirst("!", lastCommand);
           event.setMessage(aliasMessage);
         }
-        event.setOutputPrefix(String.format("%s :: ", aliasMessage));
+//        event.setOutputPrefix(String.format("%s :: ", aliasMessage));
         return true;
       } else {
         log.debug("No valid lastCommand: {}", lastCommand);
