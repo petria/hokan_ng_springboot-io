@@ -27,6 +27,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>1.8</java.version>
+
         <start-class>org.freakz.hokan_ng_springboot.bot.HokanNgSpringBootIo</start-class>
         <amq.version>5.14.0</amq.version>
         <java.version>1.8</java.version>
@@ -34,7 +38,6 @@
         <joda-time.version>2.9.4</joda-time.version>
         <logback.version>1.1.7</logback.version>
         <lombok.version>1.16.10</lombok.version>
-        <mysql.version>5.1.38</mysql.version>
     </properties>
 
     <dependencies>
