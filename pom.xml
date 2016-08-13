@@ -28,12 +28,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>org.freakz.hokan_ng_springboot.bot.HokanNgSpringBootIo</start-class>
-        <amq.version>5.7.0</amq.version>
+        <amq.version>5.14.0</amq.version>
         <java.version>1.8</java.version>
-        <jsoup.version>1.8.3</jsoup.version>
-        <joda-time.version>2.9.2</joda-time.version>
-        <logback.version>1.1.3</logback.version>
-        <lombok.version>1.16.6</lombok.version>
+        <jsoup.version>1.9.2</jsoup.version>
+        <joda-time.version>2.9.4</joda-time.version>
+        <logback.version>1.1.7</logback.version>
+        <lombok.version>1.16.10</lombok.version>
         <mysql.version>5.1.38</mysql.version>
     </properties>
 
