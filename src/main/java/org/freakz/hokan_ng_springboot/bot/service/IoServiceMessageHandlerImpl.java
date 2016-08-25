@@ -15,20 +15,20 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class IoServiceMessageHandlerImpl implements JmsServiceMessageHandler {
 
-  @Autowired
-  private ConnectionManagerService connectionManagerService;
+    @Autowired
+    private ConnectionManagerService connectionManagerService;
 
-  @Autowired
-  private ChannelService channelService;
+    @Autowired
+    private ChannelService channelService;
 
-  @Autowired
-  private JoinedUserService joinedUserService;
+    @Autowired
+    private JoinedUserService joinedUserService;
 
 
-  @Override
-  public void handleJmsEnvelope(JmsEnvelope envelope) throws Exception {
+    @Override
+    public void handleJmsEnvelope(JmsEnvelope envelope) throws Exception {
 
-  }
+    }
 
 /*  @Override
   public JmsMessage handleJmsServiceMessage(JmsMessage jmsMessage) {

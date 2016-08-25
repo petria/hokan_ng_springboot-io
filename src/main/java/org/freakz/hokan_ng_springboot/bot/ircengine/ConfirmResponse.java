@@ -11,33 +11,33 @@ import java.io.Serializable;
  */
 public class ConfirmResponse implements Serializable {
 
-  private DateTime created;
-  private EngineResponse response;
+    private DateTime created;
+    private EngineResponse response;
 
-  public ConfirmResponse(EngineResponse response) {
-    this.response = response;
-    this.created = new DateTime().now();
-  }
+    public ConfirmResponse(EngineResponse response) {
+        this.response = response;
+        this.created = new DateTime().now();
+    }
 
-  public DateTime getCreated() {
-    return created;
-  }
+    public DateTime getCreated() {
+        return created;
+    }
 
-  public void setCreated(DateTime created) {
-    this.created = created;
-  }
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
 
-  public EngineResponse getResponse() {
-    return response;
-  }
+    public EngineResponse getResponse() {
+        return response;
+    }
 
-  public void setResponse(EngineResponse response) {
-    this.response = response;
-  }
+    public void setResponse(EngineResponse response) {
+        this.response = response;
+    }
 
-  @Override
-  public String toString() {
-    return String.format("%s: %s", StringStuff.formatNiceDate(created.toDate(), false),
-        response.getIrcMessageEvent().getSender());
-  }
+    @Override
+    public String toString() {
+        return String.format("%s: %s", StringStuff.formatNiceDate(created.toDate(), false),
+                response.getIrcMessageEvent().getSender());
+    }
 }

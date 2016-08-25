@@ -13,16 +13,16 @@ import org.freakz.hokan_ng_springboot.bot.jpa.entity.IrcServerConfig;
  */
 public interface EngineConnector {
 
-  void engineConnectorGotOnline(Connector connector, HokanCore engine) throws HokanException;
+    void engineConnectorGotOnline(Connector connector, HokanCore engine) throws HokanException;
 
-  void engineConnectorTooManyConnectAttempts(Connector connector, IrcServerConfig configuredServer);
+    void engineConnectorTooManyConnectAttempts(Connector connector, IrcServerConfig configuredServer);
 
-  void engineConnectorTooManyConnections(Connector connector, IrcServerConfig configuredServer);
+    void engineConnectorTooManyConnections(Connector connector, IrcServerConfig configuredServer);
 
-  void engineConnectorDisconnected(HokanCore engine);
+    void engineConnectorDisconnected(HokanCore engine);
 
-  void engineConnectorPingTimeout(HokanCore hokanCore);
+    void engineConnectorPingTimeout(HokanCore hokanCore);
 
-  void engineConnectorExcessFlood(HokanCore hokanCore);
+    void engineConnectorExcessFlood(HokanCore hokanCore);
 
 }

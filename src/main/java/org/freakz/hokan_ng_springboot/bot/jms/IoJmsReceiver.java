@@ -14,36 +14,36 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class IoJmsReceiver extends SpringJmsReceiver {
 
-  @Autowired
-  private ConnectionManagerService connectionManagerService;
+    @Autowired
+    private ConnectionManagerService connectionManagerService;
 
-  @Override
-  public String getDestinationName() {
-    return "HokanNGIoQueue";
-  }
-
-  @Override
-  public void handleJmsEnvelope(JmsEnvelope envelope) throws Exception {
-    if (envelope.getMessageIn().getPayLoadObject("ENGINE_RESPONSE") != null) {
-      handleEngineReply(envelope);
-    } else if (envelope.getMessageIn().getPayLoadObject("TV_NOTIFY_REQUEST") != null) {
-      handleNotify(envelope, "TV_NOTIFY_REQUEST");
-    } else if (envelope.getMessageIn().getPayLoadObject("STATS_NOTIFY_REQUEST") != null) {
-      handleNotify(envelope, "STATS_NOTIFY_REQUEST");
-    } else if (envelope.getMessageIn().getPayLoadObject("URLS_NOTIFY_REQUEST") != null) {
-      handleNotify(envelope, "URLS_NOTIFY_REQUEST");
+    @Override
+    public String getDestinationName() {
+        return "HokanNGIoQueue";
     }
-  }
 
-  private void handleNotify(JmsEnvelope envelope, String payload) {
-    NotifyRequest notifyRequest = (NotifyRequest) envelope.getMessageIn().getPayLoadObject(payload);
-    log.debug("handling NotifyRequest: {}", notifyRequest);
-    connectionManagerService.handleNotifyRequest(notifyRequest);
-  }
+    @Override
+    public void handleJmsEnvelope(JmsEnvelope envelope) throws Exception {
+        if (envelope.getMessageIn().getPayLoadObject("ENGINE_RESPONSE") != null) {
+            handleEngineReply(envelope);
+        } else if (envelope.getMessageIn().getPayLoadObject("TV_NOTIFY_REQUEST") != null) {
+            handleNotify(envelope, "TV_NOTIFY_REQUEST");
+        } else if (envelope.getMessageIn().getPayLoadObject("STATS_NOTIFY_REQUEST") != null) {
+            handleNotify(envelope, "STATS_NOTIFY_REQUEST");
+        } else if (envelope.getMessageIn().getPayLoadObject("URLS_NOTIFY_REQUEST") != null) {
+            handleNotify(envelope, "URLS_NOTIFY_REQUEST");
+        }
+    }
 
-  private void handleEngineReply(JmsEnvelope envelope) {
-    EngineResponse response = (EngineResponse) envelope.getMessageIn().getPayLoadObject("ENGINE_RESPONSE");
-    connectionManagerService.handleEngineResponse(response);
-  }
+    private void handleNotify(JmsEnvelope envelope, String payload) {
+        NotifyRequest notifyRequest = (NotifyRequest) envelope.getMessageIn().getPayLoadObject(payload);
+        log.debug("handling NotifyRequest: {}", notifyRequest);
+        connectionManagerService.handleNotifyRequest(notifyRequest);
+    }
+
+    private void handleEngineReply(JmsEnvelope envelope) {
+        EngineResponse response = (EngineResponse) envelope.getMessageIn().getPayLoadObject("ENGINE_RESPONSE");
+        connectionManagerService.handleEngineResponse(response);
+    }
 
 }

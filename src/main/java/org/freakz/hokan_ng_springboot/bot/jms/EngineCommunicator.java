@@ -11,5 +11,5 @@ public interface EngineCommunicator {
 
 //  String sendToEngine(IrcMessageEvent event);
 
-  String sendToEngine(IrcMessageEvent event, UserChannel userChannel);
+    String sendToEngine(IrcMessageEvent event, UserChannel userChannel);
 }

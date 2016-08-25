@@ -11,8 +11,8 @@ import org.freakz.hokan_ng_springboot.bot.jpa.entity.IrcServerConfig;
  */
 public interface Connector {
 
-  void connect(String nick, EngineConnector engineConnector, IrcServerConfig configuredServer);
+    void connect(String nick, EngineConnector engineConnector, IrcServerConfig configuredServer);
 
-  void abortConnect();
+    void abortConnect();
 
 }

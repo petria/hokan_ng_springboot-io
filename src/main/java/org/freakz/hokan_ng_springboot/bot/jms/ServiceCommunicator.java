@@ -8,6 +8,6 @@ import org.freakz.hokan_ng_springboot.bot.events.ServiceRequestType;
  */
 public interface ServiceCommunicator {
 
-  void sendServiceRequest(IrcMessageEvent ircEvent, ServiceRequestType requestType);
+    void sendServiceRequest(IrcMessageEvent ircEvent, ServiceRequestType requestType);
 
 }
