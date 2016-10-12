@@ -238,11 +238,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
     @Override
     protected void onTopic(String channelName, String topic, String setBy, long date, boolean changed) {
         ChannelStats channelStats = getChannelStats(getChannel(channelName));
-        channelStats.setTopicSet(topic);
         channelStats.setTopicSetBy(setBy);
         channelStats.setTopicSetDate(new Date());
         channelStatsService.save(channelStats);
-        log.info("Topic '{}' set by {}", channelStats.getTopicSet(), channelStats.getTopicSetBy());
+        log.info("Topic '{}' set by {}", topic, channelStats.getTopicSetBy());
 
     }
 
@@ -485,7 +484,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         }
 
         channelStats.setLastActive(new Date());
-        channelStats.setLastMessage(ircEvent.getMessage());
+//        channelStats.setLastMessage(ircEvent.getMessage()); TODO ?
         channelStats.setLastWriter(ircEvent.getSender());
         channelStats.addToLinesReceived(1);
 
