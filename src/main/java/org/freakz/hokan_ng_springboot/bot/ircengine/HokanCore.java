@@ -284,7 +284,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
     @Override
     protected void onJoin(String channelName, String sender, String login, String hostname) {
         log.info("{} joined channel: {}", sender, channelName);
-
+        sendTopicQuery(channelName);
         IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getName(), channelName, sender, login, hostname);
         Channel channel = getChannel(ircEvent);
         ChannelStats channelStats = getChannelStats(channel);
@@ -326,6 +326,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         channelService.save(channel);
         channelStatsService.save(channelStats);
+    }
+
+    private void sendTopicQuery(String channelName) {
+        sendRawLineViaQueue("TOPIC " + channelName);
     }
 
     @Override
