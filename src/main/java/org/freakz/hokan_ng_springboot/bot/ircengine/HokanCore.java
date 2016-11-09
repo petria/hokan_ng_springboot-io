@@ -237,12 +237,14 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
     @Override
     protected void onTopic(String channelName, String topic, String setBy, long date, boolean changed) {
+        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getName(), channelName, setBy, "topic", "topic", topic);
+        ircEvent.setTimestamp(date);
         ChannelStats channelStats = getChannelStats(getChannel(channelName));
         channelStats.setTopicSetBy(setBy);
         channelStats.setTopicSetDate(new Date());
         channelStatsService.save(channelStats);
+        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CHANNEL_TOPIC_SET_REQUEST);
         log.info("Topic '{}' set by {}", topic, channelStats.getTopicSetBy());
-
     }
 
     @Override
