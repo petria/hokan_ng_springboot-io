@@ -1,18 +1,43 @@
 package org.freakz.hokan_ng_springboot.bot.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
-import org.freakz.hokan_ng_springboot.bot.core.HokanCoreService;
-import org.freakz.hokan_ng_springboot.bot.events.*;
-import org.freakz.hokan_ng_springboot.bot.exception.HokanException;
+import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
+import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
+import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcEventFactory;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
+import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStats;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcLog;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.JoinedUser;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.SearchReplace;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.User;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserFlag;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelPropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelStatsService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcLogService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.JoinedUserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.SearchReplaceService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserService;
+import org.freakz.hokan_ng_springboot.bot.common.service.AccessControlService;
+import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
+import org.freakz.hokan_ng_springboot.bot.common.util.IRCUtility;
+import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.freakz.hokan_ng_springboot.bot.ircengine.connector.EngineConnector;
 import org.freakz.hokan_ng_springboot.bot.jms.EngineCommunicator;
 import org.freakz.hokan_ng_springboot.bot.jms.ServiceCommunicator;
-import org.freakz.hokan_ng_springboot.bot.jpa.entity.*;
-import org.freakz.hokan_ng_springboot.bot.jpa.service.*;
-import org.freakz.hokan_ng_springboot.bot.service.AccessControlService;
-import org.freakz.hokan_ng_springboot.bot.util.CommandArgs;
-import org.freakz.hokan_ng_springboot.bot.util.IRCUtility;
-import org.freakz.hokan_ng_springboot.bot.util.StringStuff;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.PircBotUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +45,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -429,9 +458,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         User user = getUser(ircEvent);
 
-//    urlLoggerService.catchUrls(ircEvent, ch, this);
         serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
-
         if (accessControlService.isAdminUser(user)) {
             handleBuiltInCommands(ircEvent);
         }

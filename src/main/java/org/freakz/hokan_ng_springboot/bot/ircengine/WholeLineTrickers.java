@@ -1,8 +1,8 @@
 package org.freakz.hokan_ng_springboot.bot.ircengine;
 
-import org.freakz.hokan_ng_springboot.bot.events.IrcMessageEvent;
-import org.freakz.hokan_ng_springboot.bot.util.StringStuff;
-import org.freakz.hokan_ng_springboot.bot.util.Uptime;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
+import org.freakz.hokan_ng_springboot.bot.common.util.Uptime;
 import org.jibble.pircbot.Colors;
 
 import java.util.Calendar;

@@ -1,16 +1,16 @@
 package org.freakz.hokan_ng_springboot.bot.jms;
 
 import lombok.extern.slf4j.Slf4j;
-import org.freakz.hokan_ng_springboot.bot.enums.HokanModule;
-import org.freakz.hokan_ng_springboot.bot.events.IrcMessageEvent;
-import org.freakz.hokan_ng_springboot.bot.events.ServiceRequest;
-import org.freakz.hokan_ng_springboot.bot.events.ServiceRequestType;
-import org.freakz.hokan_ng_springboot.bot.jms.api.JmsSender;
-import org.freakz.hokan_ng_springboot.bot.jpa.entity.Alias;
-import org.freakz.hokan_ng_springboot.bot.jpa.entity.UserChannel;
-import org.freakz.hokan_ng_springboot.bot.jpa.service.AliasService;
-import org.freakz.hokan_ng_springboot.bot.util.CommandArgs;
-import org.freakz.hokan_ng_springboot.bot.util.StringStuff;
+import org.freakz.hokan_ng_springboot.bot.common.enums.HokanModule;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequest;
+import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
+import org.freakz.hokan_ng_springboot.bot.common.jms.api.JmsSender;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Alias;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.AliasService;
+import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
+import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +18,21 @@ import java.util.List;
 
 /**
  * Created by Petri Airio on 9.4.2015.
+ * -
  */
 @Service
 @Slf4j
 public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator {
 
-    @Autowired
-    private AliasService aliasService;
+    private final AliasService aliasService;
+
+    private final JmsSender jmsSender;
 
     @Autowired
-    private JmsSender jmsSender;
+    public CommunicatorImpl(AliasService aliasService, JmsSender jmsSender) {
+        this.aliasService = aliasService;
+        this.jmsSender = jmsSender;
+    }
 
     private boolean resolveAlias(IrcMessageEvent event) {
         String line = event.getMessage();
@@ -79,7 +84,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
                 boolean between = StringStuff.isInBetween(message, "&&", ' ');
                 log.info("Aliased: {} - RepeatAlias: {} - between = {}", aliased, repeatAlias, between);
                 if (!message.startsWith("!alias") && between) {
-                    String[] split = message.split("\\&\\&");
+                    String[] split = message.split("&&");
                     for (String splitted : split) {
                         IrcMessageEvent splitEvent = (IrcMessageEvent) event.clone();
                         String trimmed = splitted.trim();

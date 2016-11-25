@@ -1,6 +1,7 @@
 package org.freakz.hokan_ng_springboot.bot.ircengine.connector;
 
-import org.freakz.hokan_ng_springboot.bot.jpa.entity.IrcServerConfig;
+
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
 
 /**
  * User: petria

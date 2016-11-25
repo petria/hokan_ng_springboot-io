@@ -1,16 +1,27 @@
 package org.freakz.hokan_ng_springboot.bot.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.freakz.hokan_ng_springboot.bot.events.EngineResponse;
-import org.freakz.hokan_ng_springboot.bot.events.NotifyRequest;
-import org.freakz.hokan_ng_springboot.bot.exception.HokanException;
-import org.freakz.hokan_ng_springboot.bot.exception.HokanServiceException;
+import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
+import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
+import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
+import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStartupState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.LoggedInUserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserRepositoryService;
+import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
 import org.freakz.hokan_ng_springboot.bot.ircengine.HokanCore;
 import org.freakz.hokan_ng_springboot.bot.ircengine.connector.AsyncConnector;
 import org.freakz.hokan_ng_springboot.bot.ircengine.connector.Connector;
 import org.freakz.hokan_ng_springboot.bot.ircengine.connector.EngineConnector;
-import org.freakz.hokan_ng_springboot.bot.jpa.entity.*;
-import org.freakz.hokan_ng_springboot.bot.jpa.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -23,6 +34,7 @@ import java.util.Map;
 
 /**
  * Created by AirioP on 17.2.2015.
+ * -
  */
 @Service
 @Slf4j
