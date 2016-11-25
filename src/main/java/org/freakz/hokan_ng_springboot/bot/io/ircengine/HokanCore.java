@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.ircengine;
+package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
@@ -35,9 +35,9 @@ import org.freakz.hokan_ng_springboot.bot.common.service.AccessControlService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.IRCUtility;
 import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
-import org.freakz.hokan_ng_springboot.bot.ircengine.connector.EngineConnector;
-import org.freakz.hokan_ng_springboot.bot.jms.EngineCommunicator;
-import org.freakz.hokan_ng_springboot.bot.jms.ServiceCommunicator;
+import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.EngineConnector;
+import org.freakz.hokan_ng_springboot.bot.io.jms.EngineCommunicator;
+import org.freakz.hokan_ng_springboot.bot.io.jms.ServiceCommunicator;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.PircBotUser;
 import org.springframework.beans.factory.annotation.Autowired;

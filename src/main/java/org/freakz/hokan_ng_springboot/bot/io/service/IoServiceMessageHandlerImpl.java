@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.service;
+package org.freakz.hokan_ng_springboot.bot.io.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.jms.JmsEnvelope;

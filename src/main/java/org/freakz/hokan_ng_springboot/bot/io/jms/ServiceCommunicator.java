@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.jms;
+package org.freakz.hokan_ng_springboot.bot.io.jms;
 
 import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
 import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;

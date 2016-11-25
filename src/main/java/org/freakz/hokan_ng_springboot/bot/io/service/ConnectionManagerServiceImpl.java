@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.service;
+package org.freakz.hokan_ng_springboot.bot.io.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
@@ -18,10 +18,10 @@ import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserRepositoryService;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
-import org.freakz.hokan_ng_springboot.bot.ircengine.HokanCore;
-import org.freakz.hokan_ng_springboot.bot.ircengine.connector.AsyncConnector;
-import org.freakz.hokan_ng_springboot.bot.ircengine.connector.Connector;
-import org.freakz.hokan_ng_springboot.bot.ircengine.connector.EngineConnector;
+import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
+import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.AsyncConnector;
+import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.Connector;
+import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.EngineConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;

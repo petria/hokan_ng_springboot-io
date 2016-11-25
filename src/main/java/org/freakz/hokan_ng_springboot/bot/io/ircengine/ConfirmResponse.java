@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.ircengine;
+package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;

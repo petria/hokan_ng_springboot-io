@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot;
+package org.freakz.hokan_ng_springboot.bot.io;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -18,9 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Configuration
-//@ComponentScan({"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.jpa.repository.service"})
-//@EnableJpaRepositories({"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.jpa.repository.service"})
-
 @SpringBootApplication
 @EnableJms
 @EnableJpaRepositories

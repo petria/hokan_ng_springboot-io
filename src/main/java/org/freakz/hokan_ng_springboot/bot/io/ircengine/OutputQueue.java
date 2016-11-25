@@ -1,4 +1,4 @@
-package org.freakz.hokan_ng_springboot.bot.ircengine;
+package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.cmdpool.CommandPool;
