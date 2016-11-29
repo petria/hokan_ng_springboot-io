@@ -5,27 +5,30 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.freakz.hokan_ng_springboot.bot.common.enums.CommandLineArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jms.annotation.EnableJms;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.jms.ConnectionFactory;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-@Configuration
+/*@Configuration
 @SpringBootApplication
 @EnableJms
 @EnableJpaRepositories
 @EnableTransactionManagement
+@ComponentScan(        {"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.common.jpa.repository"}        )*/
+@Configuration
+@ComponentScan({"org.freakz.hokan_ng_springboot.bot"})
+@EnableAutoConfiguration
 @Slf4j
 public class HokanNgSpringBootIo {
 
     private static String JMS_BROKER_URL = "tcp://localhost:61616";
+
 
     @Bean
     public ConnectionFactory connectionFactory() {
