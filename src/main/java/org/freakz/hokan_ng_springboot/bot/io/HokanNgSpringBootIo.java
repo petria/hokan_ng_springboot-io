@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.annotation.EnableJms;
 
 import javax.jms.ConnectionFactory;
 import java.io.FileNotFoundException;
@@ -17,13 +18,15 @@ import java.util.Map;
 
 /*@Configuration
 @SpringBootApplication
-@EnableJms
-@EnableJpaRepositories
-@EnableTransactionManagement
-@ComponentScan(        {"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.common.jpa.repository"}        )*/
+@ComponentScan(        {"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.common.jpa.repository"}        )
+//@EnableJpaRepositories
+//@EnableTransactionManagement
+
+*/
 @Configuration
-@ComponentScan({"org.freakz.hokan_ng_springboot.bot"})
 @EnableAutoConfiguration
+@EnableJms
+@ComponentScan({"org.freakz.hokan_ng_springboot.bot"})
 @Slf4j
 public class HokanNgSpringBootIo {
 
