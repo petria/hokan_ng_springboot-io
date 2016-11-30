@@ -16,14 +16,19 @@
     </parent>
 
     <repositories>
-
         <repository>
             <id>hokannew</id>
             <name>hokannew-releases</name>
             <url>http://hokannew.no-ip.biz/artifactory/libs-release-local</url>
         </repository>
-
     </repositories>
+
+    <scm>
+        <url>https://github.com/petria/hokan_ng_springboot-io</url>
+        <connection>scm:git:git@github.com:petria/hokan_ng_springboot-io.git</connection>
+        <developerConnection>scm:git:git@github.com:petria/hokan_ng_springboot-io.git</developerConnection>
+    </scm>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -119,6 +124,23 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>true</doCheck>
+                    <doUpdate>true</doUpdate>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
