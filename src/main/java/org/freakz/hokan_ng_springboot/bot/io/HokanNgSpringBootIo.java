@@ -16,13 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-/*@Configuration
-@SpringBootApplication
-@ComponentScan(        {"org.freakz.hokan_ng_springboot.bot", "org.freakz.hokan_ng_springboot.bot.common.jpa.repository"}        )
-//@EnableJpaRepositories
-//@EnableTransactionManagement
-
-*/
 @Configuration
 @EnableAutoConfiguration
 @EnableJms
@@ -31,7 +24,6 @@ import java.util.Map;
 public class HokanNgSpringBootIo {
 
     private static String JMS_BROKER_URL = "tcp://localhost:61616";
-
 
     @Bean
     public ConnectionFactory connectionFactory() {
