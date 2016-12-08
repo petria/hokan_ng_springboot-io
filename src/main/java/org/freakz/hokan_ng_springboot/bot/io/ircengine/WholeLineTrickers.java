@@ -14,11 +14,11 @@ import java.util.GregorianCalendar;
  * Date: 21-Jan-2009
  * Time: 08:22:02
  */
-public class WholeLineTrickers {
+class WholeLineTrickers {
 
     private HokanCore core;
 
-    public WholeLineTrickers(HokanCore hokanCore) {
+    WholeLineTrickers(HokanCore hokanCore) {
         this.core = hokanCore;
     }
 
@@ -114,11 +114,11 @@ public class WholeLineTrickers {
         }
     }
 
-    public String[] splitByWord(String line, String word) {
+    private String[] splitByWord(String line) {
         int idx = line.indexOf(" ");
         if (idx != -1) {
             line = line.substring(idx);
-            return line.split(word);
+            return line.split("vai");
         }
         return null;
     }
@@ -142,7 +142,7 @@ public class WholeLineTrickers {
 
             String rndWord = "";
             if (msg.contains("vai")) {
-                String[] split = splitByWord(msg, "vai");
+                String[] split = splitByWord(msg);
                 rndWord = " " + StringStuff.getRandomString(split).trim() + " ";
             }
 
@@ -164,17 +164,7 @@ public class WholeLineTrickers {
 
     }
 
-    public void checkApplause(IrcMessageEvent iEvent) {
-        int rndLevel = 600;
-        int rnd = (int) (Math.random() * 1000);
-
-        if (rnd > rndLevel && iEvent.getMessage().contains("apple")) {
-            processReply(iEvent, _olpo + iEvent.getSender() + ": IL masinointia!");
-        }
-
-    }
-
-    public void checkSpede(IrcMessageEvent iEvent) {
+    private void checkSpede(IrcMessageEvent iEvent) {
         int rndLevel = 400;
         int rnd = (int) (Math.random() * 1000);
 
@@ -184,7 +174,7 @@ public class WholeLineTrickers {
 
     }
 
-    public void checkSilli(IrcMessageEvent iEvent) {
+    private void checkSilli(IrcMessageEvent iEvent) {
         int rndLevel = 850;
         int rnd = (int) (Math.random() * 1000);
         String msg = iEvent.getMessage().toLowerCase();
@@ -208,7 +198,7 @@ public class WholeLineTrickers {
         }
     }
 
-    public void checkOlisko(IrcMessageEvent iEvent) {
+    private void checkOlisko(IrcMessageEvent iEvent) {
         String msg = iEvent.getMessage().toLowerCase();
         if (msg.matches("olisko .*|oliskohan .*")) {
             int rnd = (int) (Math.random() * 1000);
@@ -224,7 +214,7 @@ public class WholeLineTrickers {
     private final static String[] stonez1 = {"kivi", "paperi", "sakset"};
     private final static String[] stonez2 = {"paperi", "sakset", "kivi"};
 
-    public void checkStonePaper(IrcMessageEvent iEvent) {
+    private void checkStonePaper(IrcMessageEvent iEvent) {
         String msg = iEvent.getMessage().toLowerCase();
         int fndIdx = -1;
         if (msg.equals(stonez1[0])) {
@@ -255,17 +245,10 @@ public class WholeLineTrickers {
     }
 
 
-    public void checkMuisti(IrcMessageEvent iEvent) {
+    private void checkMuisti(IrcMessageEvent iEvent) {
         String msg = iEvent.getMessage().toLowerCase();
         if (msg.startsWith("muista")) {
             processReply(iEvent, _olpo + iEvent.getSender() + ": muistissa!");
-        }
-    }
-
-    private void checkHellsKitchen(IrcMessageEvent iEvent) {
-        String msg = iEvent.getMessage().toLowerCase();
-        if (msg.matches("ranskikset|chef|kitchen")) {
-            processReply(iEvent, _olpo + iEvent.getSender() + ": SAATANA MIKSI SÄ TOIT NÄMÄ MULLE, ULOS TÄÄLTÄ, RANSKIKSET EI OLE MUSTIA!!!");
         }
     }
 
@@ -275,18 +258,11 @@ public class WholeLineTrickers {
 
     private static long _lastReply = 0;
 
-    public void checkWholeLineTrickers(IrcMessageEvent iEvent) {
+    void checkWholeLineTrigger(IrcMessageEvent iEvent) {
 
         long now = new Date().getTime();
         long diff = now - _lastReply;
 
-/*    if (iEvent.getHokanUser().isOlpo() > 0) {
-      _olpo = "OLPO ";
-    } else {
-      _olpo = "";
-    }*/
-
-        //   checkApplause(iEvent);
         checkJospa(iEvent);
         checkPerkeleVittu(iEvent);
         checkJoulu(iEvent);
@@ -294,14 +270,10 @@ public class WholeLineTrickers {
         checkSpede(iEvent);
         checkSilli(iEvent);
         checkOlisko(iEvent);
-
-//    checkKickPattern(iEvent);
         checkStonePaper(iEvent);
         checkMuisti(iEvent);
-        checkHellsKitchen(iEvent);
 
         if (diff > 1500) {
-
             checkHuomenta(iEvent);
             _lastReply = now;
         }

@@ -534,7 +534,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         boolean wlt = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_WHOLELINE_TRICKERS, false);
         if (wlt || ircEvent.isToMe()) {
             WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this);
-            wholeLineTrickers.checkWholeLineTrickers(ircEvent);
+            wholeLineTrickers.checkWholeLineTrigger(ircEvent);
         }
         serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
 
