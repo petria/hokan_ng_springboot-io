@@ -2,7 +2,6 @@ package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.IrcEvent;
 import org.freakz.hokan_ng_springboot.bot.common.events.IrcEventFactory;
@@ -660,7 +659,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         handleSendMessage(response);
 
-        for (EngineMethodCall methodCall : response.getEngineMethodCalls()) {
+/*        for (EngineMethodCall methodCall : response.getEngineMethodCalls()) {
             String methodName = methodCall.getMethodName();
             String[] methodArgs = methodCall.getMethodArgs();
 
@@ -685,7 +684,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             } else {
                 log.error("Couldn't find method for: " + methodName);
             }
-        }
+        }*/
     }
 
     // @Override
