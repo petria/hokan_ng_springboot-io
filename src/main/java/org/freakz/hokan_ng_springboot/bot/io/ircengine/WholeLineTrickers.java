@@ -87,7 +87,7 @@ class WholeLineTrickers {
             GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
             cal.set(Calendar.MONTH, Calendar.DECEMBER);
             cal.set(Calendar.DAY_OF_MONTH, 24);
-            cal.set(Calendar.YEAR, 2016);
+            cal.set(Calendar.YEAR, 2017);
             cal.set(Calendar.HOUR_OF_DAY, 12);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
