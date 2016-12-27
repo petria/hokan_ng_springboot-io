@@ -106,6 +106,39 @@ class WholeLineTrickers {
         }
     }
 
+    private int juhannusRandomBase = 65;
+
+    private void checkJuhannus(IrcMessageEvent iEvent) {
+
+        String line = iEvent.getMessage();
+
+        int rnd = 1 + (int) (Math.random() * 100);
+        if (line.contains("juhannus") && rnd > juhannusRandomBase) {
+            String[] format = {"00", "00", "00", "0"};
+
+            GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
+            cal.set(Calendar.MONTH, Calendar.JUNE);
+            cal.set(Calendar.DAY_OF_MONTH, 24);
+            cal.set(Calendar.YEAR, 2017);
+            cal.set(Calendar.HOUR_OF_DAY, 12);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            Uptime uptime = new Uptime(cal.getTime().getTime());
+            Integer[] ut = uptime.getTimeDiff();
+
+            String ret = StringStuff.fillTemplate("%3 päivää ja %2:%1:%0 juhannukseen!", ut, format);
+
+            processReply(iEvent, _olpo + ret);
+            jouluRandomBase = 120;
+
+        } else {
+            juhannusRandomBase--;
+        }
+    }
+
+
     private void checkJospa(IrcMessageEvent iEvent) {
         if (iEvent.getMessage().startsWith("jospa")) {
             String rndWord = "joo"; // TODO ChannelLogger.getInstance().getRandomWord();
@@ -266,6 +299,7 @@ class WholeLineTrickers {
         checkJospa(iEvent);
         checkPerkeleVittu(iEvent);
         checkJoulu(iEvent);
+        checkJuhannus(iEvent);
         checkPitasko(iEvent);
         checkSpede(iEvent);
         checkSilli(iEvent);
