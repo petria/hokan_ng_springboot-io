@@ -113,6 +113,9 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
     private Map<String, ConfirmResponse> confirmResponseMap = new HashMap<>();
 
+    public HokanCore() {
+    }
+
     public void init(String botName, IrcServerConfig ircServerConfig) {
         this.ircServerConfig = ircServerConfig;
         setVerbose(true);
