@@ -41,7 +41,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
         for (Alias alias : aliases) {
             if (line.contains(alias.getAlias())) {
                 String message = event.getMessage();
-                String aliasMessage = message.replaceFirst(alias.getAlias(), alias.getCommand());
+                String aliasMessage = message.replaceAll(alias.getAlias(), alias.getCommand());
                 event.setMessage(aliasMessage);
                 wasAlias = true;
             }
