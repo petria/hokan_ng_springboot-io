@@ -37,15 +37,16 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
     private boolean resolveAlias(IrcMessageEvent event) {
         String line = event.getMessage();
         List<Alias> aliases = aliasService.findAll();
+        boolean wasAlias = false;
         for (Alias alias : aliases) {
-            if (line.startsWith(alias.getAlias())) {
+            if (line.contains(alias.getAlias())) {
                 String message = event.getMessage();
                 String aliasMessage = message.replaceFirst(alias.getAlias(), alias.getCommand());
                 event.setMessage(aliasMessage);
-                return true;
+                wasAlias = true;
             }
         }
-        return false;
+        return wasAlias;
     }
 
     private boolean isLastCommandRepeatAlias(IrcMessageEvent event, UserChannel userChannel) {
