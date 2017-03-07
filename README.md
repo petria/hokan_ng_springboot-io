@@ -8,7 +8,7 @@ Hokan the Java IRC bot
    Either modify values in application.properties file and re-build jar to apply or when running bot
    override with command line parameters:
 
-   > java -jar target\hokan_ng_springboot-io-0.0.1-final.jar --spring.datasource.url=jdbc:mysql://<DATABASE_HOST>/<DATABASE_NAME>?autoReconnect=true
+   > java -jar target\hokan_ng_springboot-io-0.0.1-final.jar --spring.datasource.url=jdbc:mysql://DATABASE_HOST/DATABASE_NAME?autoReconnect=true
 
    All parameters in application.properties can be overriden same way ...
 
