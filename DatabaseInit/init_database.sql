@@ -1,5 +1,5 @@
 #
-# Create or reset mariadb database hokan_ng_springboot
+# Create or reset Maria DB database hokan_ng_springboot
 #
 
 DROP DATABASE  IF EXISTS hokan_ng_springboot;

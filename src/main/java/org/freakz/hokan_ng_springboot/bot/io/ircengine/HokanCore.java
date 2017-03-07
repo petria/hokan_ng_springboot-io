@@ -2,35 +2,10 @@ package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcEvent;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcEventFactory;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
-import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
+import org.freakz.hokan_ng_springboot.bot.common.events.*;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStats;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcLog;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.JoinedUser;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.SearchReplace;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.User;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserFlag;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelPropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelStatsService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcLogService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.JoinedUserService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.SearchReplaceService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
 import org.freakz.hokan_ng_springboot.bot.common.service.AccessControlService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.IRCUtility;
@@ -45,11 +20,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -465,6 +436,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (accessControlService.isAdminUser(user)) {
             handleBuiltInCommands(ircEvent);
         }
+        PropertyEntity adminToken = propertyService.findFirstByPropertyName(PropertyName.PROP_SYS_ADMIN_USER_TOKEN);
+        if (adminToken != null) {
+            handleAdminUserToken(ircEvent, user, adminToken);
+        }
 
         boolean ignore = accessControlService.hasUserFlag(user, UserFlag.IGNORE_ON_CHANNEL);
         if (ignore) {
@@ -476,6 +451,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         }
 
     }
+
 
     @Override
     protected void onMessage(String channel, String sender, String login, String hostname, String message,
@@ -551,6 +527,22 @@ public class HokanCore extends PircBot implements HokanCoreService {
             log.debug("Ignoring: {}", user);
         } else {
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
+        }
+    }
+
+    private void handleAdminUserToken(IrcMessageEvent ircEvent, User user, PropertyEntity token) {
+        CommandArgs args = new CommandArgs(ircEvent.getMessage());
+        if (args.getCmd().equalsIgnoreCase("@AdminUserToken")) {
+            String userToken = args.getArg(1);
+            String tokenValue = token.getValue();
+            if (userToken.equals(tokenValue)) {
+                Set<UserFlag> flags = new HashSet<>();
+                flags.add(UserFlag.ADMIN);
+                user = accessControlService.addUserFlags(user, flags);
+                log.debug("AdminUserToken granted for: {}", user.getNick());
+                handleSendMessage(ircEvent.getSender(), "You are now Admin!");
+                propertyService.delete(token);
+            }
         }
     }
 

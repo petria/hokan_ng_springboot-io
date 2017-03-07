@@ -5,6 +5,7 @@ import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,12 +45,28 @@ public class ConfigurationInitImpl implements ConfigurationInit {
     }
 
     private boolean createDatabaseItems(Map<ConfigurationItems, String> answers) {
-
-        PropertyEntity propertyEntity = new PropertyEntity(PropertyName.PROP_SYS_BOT_NICK, answers.get(ConfigurationItems.BOT_NAME), "");
+        String botName = answers.get(ConfigurationItems.BOT_NAME);
+        PropertyEntity propertyEntity = new PropertyEntity(PropertyName.PROP_SYS_BOT_NICK, botName, "");
 
         System.out.printf("Setting bot name ...\n");
         propertyEntity = propertyService.save(propertyEntity);
         System.out.printf("Bot name set to: %s\n\n", propertyEntity.getValue());
+
+        String adminUserToken = StringStuff.generatePasswd(10);
+        PropertyEntity masterUserTokenPropertyEntity = new PropertyEntity(PropertyName.PROP_SYS_ADMIN_USER_TOKEN, adminUserToken, "");
+        masterUserTokenPropertyEntity = propertyService.save(masterUserTokenPropertyEntity);
+
+        System.out.printf("***************************************************\n");
+        System.out.printf("*           !!!!!!  IMPORTANT !!!!!!              *\n");
+        System.out.printf("*                                                 *\n");
+
+        System.out.printf("  ADMIN USER TOKEN IS: %s\n", adminUserToken);
+        System.out.printf("  DO: /msg %s @AdminUserToken %s\n", botName, adminUserToken);
+        System.out.printf("  TO GET ADMIN RIGHTS\n");
+
+        System.out.printf("*                                                 *\n");
+        System.out.printf("*           !!!!!!  IMPORTANT !!!!!!              *\n");
+        System.out.printf("***************************************************\n\n");
 
         System.out.printf("Creating Network ...\n");
         Network network = new Network(answers.get(ConfigurationItems.NETWORK_NAME));
