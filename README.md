@@ -1,8 +1,8 @@
 = Hokan the Java IRC bot =
 
- == BOT COMPONENTS
+ == BOT MODULES
 
-   Bot is divided in three parts
+   Bot is divided in three modules
 
     - HokanIO
     - HokanEngine
@@ -75,7 +75,7 @@
     By sending bot message: @AdminUserToken <XXXX> the sender of message will be granted Admin rights.
     Token can only be used once.
 
-  4) Start bot IO module
+  4) Start HokanIO module
 
    > java -jar target\hokan_ng_springboot-io-0.0.1-final.jar
 
