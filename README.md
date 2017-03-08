@@ -44,27 +44,30 @@
 
    No further configuration is needed.
 
- == DEFAULT PARAMETERS
+ == BUILDING HOKAN MODULES
 
-   By default bot will try to use parameters defined in src/main/resources/application.properties
-   to connect database.
+    NOTE: Apache Maven to be installed so that mvn command is working from command line.
+          Java JDK must be installed so that both java and javac is working from command line.
+          Use latest version of Apache Maven and Java JDK.
 
-   Either modify values in application.properties file and re-build jar to apply or when running bot
-   override with command line parameters:
+    Assuming you have cloned with git all three modules to directories in following way:
 
-   java -jar target\hokan_ng_springboot-io-0.0.1-final.jar --spring.datasource.url=jdbc:mysql://DATABASE_HOST/DATABASE_NAME?autoReconnect=true
+        hokan_ng_springboot-engine/
+    bot/hokan_ng_springboot-io/
+        hokan_ng_springboot-services/
 
-   All parameters in application.properties can be override same way ...
+    Each module need to be build. Go to each module directory and build it:
+
+    mvn install -Dmaven.test.skip=true
+
+    this will generate JAR file to module target/ directory.
 
  == HOW TO INITIALIZE DATABASE
 
-  1) Build with Maven
+  DB initialize sql scripts are located in HokanIO module. That module is also used to create
+  initial configuration how to connect to IRC network.
 
-   mvn package
-
-   this will generate .jar file to target/ directory
-
-  2) Init MariaDB
+  1) Init MariaDB
 
    mysql < DatabaseInit/create_user.sql
    mysql < DatabaseInit/init_database.sql
@@ -72,15 +75,14 @@
    First one only need to run once.
    Later one can also be used to reset database again to empty.
 
-  3) Create initial configuration to connect IRC
+  2) Create initial configuration to connect IRC
 
-   NOTE: This step should only be done once after the DB has been initialized in step 2)
-         If needed, reset the DB as in step 2) and then do step 3) again.
+   NOTE: This step should only be done once after the DB has been initialized
+         If needed, reset the DB and do this again.
 
    java -jar target\hokan_ng_springboot-io-0.0.1-final.jar --ConfigInit
 
    This will ask Network name, IrcServerConfig and Channels to use when connecting IRC network.
-
 
    NOTE: when run with --ConfigInit also AdminUserToken will be generated:
 
@@ -97,11 +99,33 @@
     By sending bot message: @AdminUserToken <XXXX> the sender of message will be granted Admin rights.
     Token can only be used once.
 
-  4) Starting HokanIO module
+ == DEFAULT PARAMETERS
+
+   By default bot will try to use parameters defined in src/main/resources/application.properties
+   to connect database.
+
+   Either modify values in application.properties file and re-build jar to apply or when running bot
+   override with command line parameters:
+
+   java -jar target\hokan_ng_springboot-io-0.0.1-final.jar --spring.datasource.url=jdbc:mysql://DATABASE_HOST/DATABASE_NAME?autoReconnect=true
+
+   All parameters in application.properties can be override same way ...
+
+ == RUNNING HOKAN MODULES
+
+    HokanIO: this is the one that connects to the IRC network and should be get working first. Once HokanIO
+    starts ok and get online other modules is good to start.
 
     java -jar target\hokan_ng_springboot-io-0.0.1-final.jar
 
     Now bot should try to connect IRC server defined in step 3) and then join channels.
 
-  5) Starting other modules
+    HokanEngine: this handles all commands prefixed with !
+
+    java -jar target\hokan_ng_springboot-engine-0.0.1-final.jar
+
+    HokanServices: this collects and updates data used by commands, like weather and TV information.
+
+    java -jar target\hokan_ng_springboot-services-0.0.1-final.jar
+
 
