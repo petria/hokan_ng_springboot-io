@@ -1,32 +1,26 @@
 package org.freakz.hokan_ng_springboot.bot.io.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.freakz.hokan_ng_springboot.bot.common.enums.CommandLineArgs;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStartupState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.LoggedInUserService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserRepositoryService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
+import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.AsyncConnector;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.Connector;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.EngineConnector;
+import org.freakz.hokan_ng_springboot.bot.io.service.configinit.ConfigurationInit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +32,16 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class ConnectionManagerServiceImpl implements ConnectionManagerService, EngineConnector {
+public class ConnectionManagerServiceImpl implements ConnectionManagerService, EngineConnector, CommandLineRunner {
 
     @Autowired
     private ApplicationContext context;
 
     @Autowired
     private ChannelService channelService;
+
+    @Autowired
+    private ConfigurationInit configurationInit;
 
     @Autowired
     private IrcServerConfigService ircServerConfigService;
@@ -71,26 +68,6 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
     private void invalidateLoggedInUsers() {
         loggedInUserService.invalidateAll();
         userService.setAllLoggedIn(0);
-    }
-
-
-    @PostConstruct
-    public void postInit() throws HokanException {
-
-        updateServerMap();
-        resetChannelStates();
-        invalidateLoggedInUsers();
-
-        for (IrcServerConfig server : this.configuredServers.values()) {
-            log.debug(">> connecting server: " + server.getServer());
-            if (server.getIrcServerConfigState() == IrcServerConfigState.CONNECTED) {
-                try {
-                    connect(server.getNetwork());
-                } catch (HokanException e) {
-                    log.error("Couldn't get engine online: " + server.getNetwork(), e);
-                }
-            }
-        }
     }
 
     private void resetChannelStates() {
@@ -329,4 +306,39 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         log.debug("NotifyRequest sent to: {}", channel.getChannelName());
     }
 
+
+    public void startConnect() throws HokanException {
+
+        updateServerMap();
+        resetChannelStates();
+        invalidateLoggedInUsers();
+
+        for (IrcServerConfig server : this.configuredServers.values()) {
+            log.debug(">> connecting server: " + server.getServer());
+            if (server.getIrcServerConfigState() == IrcServerConfigState.CONNECTED) {
+                try {
+                    connect(server.getNetwork());
+                } catch (HokanException e) {
+                    log.error("Couldn't get engine online: " + server.getNetwork(), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        log.debug("--> ");
+        CommandLineArgsParser parser = new CommandLineArgsParser(args);
+        Map<CommandLineArgs, String> parsed = parser.parseArgs();
+        if (parsed.containsKey(CommandLineArgs.CONFIG_INIT)) {
+            log.debug("Running configuration init!");
+            configurationInit.initConfiguration();
+            System.out.println("\n\nConfiguration done!\n\nNext run bot without --ConfigInit=true\n\n");
+            SpringApplication.exit(context);
+
+        } else {
+            log.debug("START CONNECT!");
+            startConnect();
+        }
+    }
 }
