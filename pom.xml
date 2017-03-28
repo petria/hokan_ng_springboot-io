@@ -19,7 +19,7 @@
         <repository>
             <id>hokannew</id>
             <name>hokannew-releases</name>
-            <url>http://petri.airiot.fi/artifactory/libs-release-local</url>
+            <url>http://artifactory.airiot.fi/artifactory/libs-release-local</url>
         </repository>
     </repositories>
 
