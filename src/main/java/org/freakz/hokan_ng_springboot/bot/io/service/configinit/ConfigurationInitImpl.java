@@ -1,12 +1,12 @@
 package org.freakz.hokan_ng_springboot.bot.io.service.configinit;
 
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.Channel;
-import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.ChannelState;
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.IrcServerConfig;
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.Network;
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoChannelRepository;
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoIrcServerConfigRepository;
 import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoNetworkRepository;
+import org.freakz.hokan_ng_springboot.bot.common.enums.ChannelState;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyEntity;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;

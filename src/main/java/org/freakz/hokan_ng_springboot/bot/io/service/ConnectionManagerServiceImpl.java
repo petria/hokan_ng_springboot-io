@@ -6,7 +6,10 @@ import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
@@ -197,7 +200,7 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
     }
 
     private void joinChannels(HokanCore engine, Network network) {
-        List<Channel> channels = this.channelService.findAll();
+/*        List<Channel> channels = this.channelService.findAll();
         if (channels != null) {
             for (Channel channelToJoin : channels) {
                 if (channelToJoin.getNetwork().getName().equals(network.getName())) {
@@ -210,6 +213,8 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         } else {
             log.info("NO channels to join: {} -> {}", engine, network);
         }
+        TODO
+        */
     }
 
     @Override
@@ -259,7 +264,7 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
 
     @Override
     public void handleTvNotifyRequest(NotifyRequest notifyRequest) {
-        Channel channel = channelService.findOne(notifyRequest.getTargetChannelId());
+/*        Channel channel = channelService.findOne(notifyRequest.getTargetChannelId());
         if (channel == null) {
             log.warn("Can't notify, no channel with id: {}", notifyRequest.getTargetChannelId());
             return;
@@ -271,11 +276,15 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         }
         core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage());
         log.debug("Tv Notify sent to: {}", channel.getChannelName());
+        TODO
+        */
     }
 
     @Override
     public void handleStatsNotifyRequest(NotifyRequest notifyRequest) {
+/*
         Channel channel = channelService.findOne(notifyRequest.getTargetChannelId());
+
         if (channel == null) {
             log.warn("Can't notify, no channel with id: {}", notifyRequest.getTargetChannelId());
             return;
@@ -287,12 +296,13 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         }
         core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage());
         log.debug("Stats Notify sent to: {}", channel.getChannelName());
-
+        TODO
+*/
     }
 
     @Override
     public void handleNotifyRequest(NotifyRequest notifyRequest) {
-        Channel channel = channelService.findOne(notifyRequest.getTargetChannelId());
+/*        Channel channel = channelService.findOne(notifyRequest.getTargetChannelId());
         if (channel == null) {
             log.warn("Can't notify, no channel with id: {}", notifyRequest.getTargetChannelId());
             return;
@@ -304,6 +314,8 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         }
         core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage());
         log.debug("NotifyRequest sent to: {}", channel.getChannelName());
+        TODO
+        */
     }
 
 

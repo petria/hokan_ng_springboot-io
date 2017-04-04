@@ -154,12 +154,14 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     public Channel getChannel(String channelName) {
-        Channel channel;
-        channel = channelService.findByNetworkAndChannelName(getNetwork(), channelName);
+        Channel channel = null;
+/*        channel = channelService.findByNetworkAndChannelName(getNetwork(), channelName);
 
         if (channel == null) {
             channel = channelService.createChannel(getNetwork(), channelName);
         }
+        todo
+        */
         return channel;
     }
 
@@ -266,7 +268,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (recipientNick.equalsIgnoreCase(getNick())) {
             Channel channel = getChannel(ircEvent);
             channel.setChannelState(ChannelState.KICKED_OUT);
-            channelService.save(channel);
+// TODO            channelService.save(channel);
         }
     }
 
@@ -280,7 +282,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (sender.equalsIgnoreCase(getNick())) {
             Channel channel = getChannel(ircEvent);
             channel.setChannelState(ChannelState.PARTED);
-            channelService.save(channel);
+// TODO            channelService.save(channel);
         }
     }
 
@@ -327,7 +329,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             channelStats.setMaxUserCountDate(new Date());
         }
 
-        channelService.save(channel);
+// TODO        channelService.save(channel);
         channelStatsService.save(channelStats);
     }
 
@@ -520,7 +522,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (accessControlService.isAdminUser(user)) {
             handleBuiltInCommands(ircEvent);
         }
-        this.channelService.save(ch);
+// TODO        this.channelService.save(ch);
 
         boolean ignore = accessControlService.hasUserFlag(user, UserFlag.IGNORE_ON_CHANNEL);
         if (ignore) {
