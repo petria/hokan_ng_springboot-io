@@ -1,9 +1,14 @@
 package org.freakz.hokan_ng_springboot.bot.io.service.configinit;
 
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.ChannelState;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.entity.Network;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoChannelRepository;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoIrcServerConfigRepository;
+import org.freakz.hokan_ng_springboot.bot.common.db.nosql.repository.MongoNetworkRepository;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyEntity;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
 import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,11 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+/*import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;*/
 
 /**
  * Created by Petri Airio on 7.3.2017.
@@ -22,13 +32,13 @@ public class ConfigurationInitImpl implements ConfigurationInit {
     private static Scanner sc = new Scanner(System.in);
 
     @Autowired
-    private ChannelService channelService;
+    private MongoChannelRepository mongoChannelRepository;
 
     @Autowired
-    private IrcServerConfigService ircServerConfigService;
+    private MongoIrcServerConfigRepository mongoIrcServerConfigRepository;
 
     @Autowired
-    private NetworkService networkService;
+    private MongoNetworkRepository mongoNetworkRepository;
 
     @Autowired
     private PropertyService propertyService;
@@ -70,7 +80,7 @@ public class ConfigurationInitImpl implements ConfigurationInit {
 
         System.out.printf("Creating Network ...\n");
         Network network = new Network(answers.get(ConfigurationItems.NETWORK_NAME));
-        network = networkService.save(network);
+        network = mongoNetworkRepository.save(network);
         System.out.printf("Network created: %s\n\n", network.toString());
 
         System.out.printf("Creating IrcServerConfig for Network ...\n");
@@ -79,10 +89,10 @@ public class ConfigurationInitImpl implements ConfigurationInit {
         ircServerConfig.setServer(answers.get(ConfigurationItems.IRC_SERVER_ADDRESS));
         ircServerConfig.setPort(Integer.parseInt(answers.get(ConfigurationItems.IRC_SERVER_PORT)));
         ircServerConfig.setServerPassword(answers.get(ConfigurationItems.IRC_SERVER_PASSWORD));
-        ircServerConfig.setUseThrottle(1);
-        ircServerConfig.setIrcServerConfigState(IrcServerConfigState.CONNECTED);
+        ircServerConfig.setThrottle(true);
+        ircServerConfig.setConnected(true);
 
-        ircServerConfig = ircServerConfigService.save(ircServerConfig);
+        ircServerConfig = mongoIrcServerConfigRepository.save(ircServerConfig);
         System.out.printf("IrcServerConfig created: %s\n\n", ircServerConfig.toString());
 
         System.out.printf("Creating Channels ...\n");
@@ -90,10 +100,10 @@ public class ConfigurationInitImpl implements ConfigurationInit {
 
         for (String channelName : channelNames) {
             Channel channel = new Channel(network, channelName);
-            channel.setChannelFlags("");
+//            channel.setChannelFlags("");
             channel.setChannelState(ChannelState.NONE);
-            channel.setChannelStartupState(ChannelStartupState.JOIN);
-            channel = channelService.save(channel);
+            channel.setJoinOnStart(true);
+            channel = mongoChannelRepository.save(channel);
             System.out.printf("Channel created: %s\n", channel.toString());
         }
         return true;

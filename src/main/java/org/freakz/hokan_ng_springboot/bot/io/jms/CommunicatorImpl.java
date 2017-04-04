@@ -6,9 +6,9 @@ import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
 import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequest;
 import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
 import org.freakz.hokan_ng_springboot.bot.common.jms.api.JmsSender;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Alias;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.AliasService;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.Alias;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,11 +80,11 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
         if (event.getMessage().length() > 0) {
             try {
                 boolean repeatAlias = isLastCommandRepeatAlias(event, userChannel);
-                boolean aliased = resolveAlias(event);
                 String message = event.getMessage();
                 boolean between = StringStuff.isInBetween(message, "&&", ' ');
-                log.info("Aliased: {} - RepeatAlias: {} - between = {}", aliased, repeatAlias, between);
-                if (!message.startsWith("!alias") && between) {
+
+                if ((!message.startsWith("!alias") || !message.startsWith("!unalias")) && between) {
+                    boolean aliased = resolveAlias(event);
                     String[] split = message.split("&&");
                     for (String splitted : split) {
                         IrcMessageEvent splitEvent = (IrcMessageEvent) event.clone();
