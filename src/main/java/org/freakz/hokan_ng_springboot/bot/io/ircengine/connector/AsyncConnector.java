@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.cmdpool.CommandPool;
 import org.freakz.hokan_ng_springboot.bot.common.cmdpool.CommandRunnable;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
+
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.IrcServerConfig;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
 import org.jibble.pircbot.NickAlreadyInUseException;
 import org.springframework.beans.factory.annotation.Autowired;

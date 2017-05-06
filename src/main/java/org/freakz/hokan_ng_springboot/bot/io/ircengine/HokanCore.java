@@ -2,10 +2,36 @@ package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
-import org.freakz.hokan_ng_springboot.bot.common.events.*;
+import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
+import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcEventFactory;
+import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStats;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcLog;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.JoinedUser;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyEntity;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.SearchReplace;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.User;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserFlag;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelPropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelStatsService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcLogService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.JoinedUserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.SearchReplaceService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserService;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.Network;
 import org.freakz.hokan_ng_springboot.bot.common.service.AccessControlService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.IRCUtility;
@@ -20,7 +46,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -105,7 +137,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     public void startOutputQueue() {
-        this.outputQueue.init(this, getIrcServerConfig().isThrottleInUse());
+        this.outputQueue.init(this, getIrcServerConfig().isThrottle());
     }
 
     @Override
@@ -150,7 +182,8 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     public Network getNetwork() {
-        return networkService.getNetwork(getIrcServerConfig().getNetwork().getName());
+        // tODO return networkService.getNetwork(getIrcServerConfig().getNetwork().getNetworkName());
+        return null;
     }
 
     public Channel getChannel(String channelName) {
@@ -170,20 +203,27 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     public ChannelStats getChannelStats(Channel channel) {
-        ChannelStats channelStats = channelStatsService.findFirstByChannel(channel);
+/*        ChannelStats channelStats = channelStatsService.findFirstByChannel(channel);
         if (channelStats == null) {
             channelStats = new ChannelStats();
             channelStats.setChannel(channel);
         }
         return channelStats;
+        TODO
+        */
+        return null;
     }
 
     public UserChannel getUserChannel(User user, Channel channel, IrcLog ircLog) {
-        UserChannel userChannel = userChannelService.getUserChannel(user, channel);
+/*        UserChannel userChannel = userChannelService.getUserChannel(user, channel);
         if (userChannel == null) {
             userChannel = userChannelService.createUserChannel(user, channel, ircLog);
         }
         return userChannel;
+        TODO
+        */
+
+        return null;
     }
 
     public User getUser(IrcEvent ircEvent) {
@@ -213,7 +253,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         channelStats.setLastActive(new Date());
         channelStatsService.save(channelStats);
 
-        this.joinedUsersService.clearJoinedUsers(channel);
+// TODO        this.joinedUsersService.clearJoinedUsers(channel);
         for (String whoLine : whoReplies) {
             String[] split = whoLine.split(" ");
             String nick = split[5];
@@ -236,13 +276,13 @@ public class HokanCore extends PircBot implements HokanCoreService {
       if (userChannel == null) {
         userChannelService.createUserChannel(user, channel);
       }*/
-            this.joinedUsersService.createJoinedUser(channel, user, userModes);
+// TODO            this.joinedUsersService.createJoinedUser(channel, user, userModes);
         }
     }
 
     @Override
     protected void onTopic(String channelName, String topic, String setBy, long date, boolean changed) {
-        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getName(), channelName, setBy, "topic", "topic", topic);
+        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getNetworkName(), channelName, setBy, "topic", "topic", topic);
         ircEvent.setTimestamp(date);
         ChannelStats channelStats = getChannelStats(getChannel(channelName));
         channelStats.setTopicSetBy(setBy);
@@ -264,10 +304,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
     protected void onKick(String channelName, String kickerNick, String kickerLogin, String kickerHostname, String recipientNick, String reason) {
         log.info("{} kicked from {}", recipientNick, channelName);
         sendWhoQuery(channelName);
-        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getName(), channelName, kickerNick, kickerLogin, kickerHostname);
+        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getNetworkName(), channelName, kickerNick, kickerLogin, kickerHostname);
         if (recipientNick.equalsIgnoreCase(getNick())) {
             Channel channel = getChannel(ircEvent);
-            channel.setChannelState(ChannelState.KICKED_OUT);
+// TODO            channel.setChannelState(ChannelState.KICKED_OUT);
 // TODO            channelService.save(channel);
         }
     }
@@ -277,11 +317,11 @@ public class HokanCore extends PircBot implements HokanCoreService {
         log.info("{} parted channel: {}", sender, channelName);
         sendWhoQuery(channelName);
 
-        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getName(), channelName, sender, login, hostname);
+        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getNetworkName(), channelName, sender, login, hostname);
 
         if (sender.equalsIgnoreCase(getNick())) {
             Channel channel = getChannel(ircEvent);
-            channel.setChannelState(ChannelState.PARTED);
+// TODO            channel.setChannelState(ChannelState.PARTED);
 // TODO            channelService.save(channel);
         }
     }
@@ -290,7 +330,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
     protected void onJoin(String channelName, String sender, String login, String hostname) {
         log.info("{} joined channel: {}", sender, channelName);
         sendTopicQuery(channelName);
-        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getName(), channelName, sender, login, hostname);
+        IrcEvent ircEvent = IrcEventFactory.createIrcEvent(getName(), getNetwork().getNetworkName(), channelName, sender, login, hostname);
         Channel channel = getChannel(ircEvent);
         ChannelStats channelStats = getChannelStats(channel);
         User user = getUser(ircEvent);
@@ -300,8 +340,8 @@ public class HokanCore extends PircBot implements HokanCoreService {
             // Bot joining
             Network nw = getNetwork();
             nw.addToChannelsJoined(1);
-            this.networkService.save(nw);
-            channel.setChannelState(ChannelState.JOINED);
+// TODO            this.networkService.save(nw);
+// TODO           channel.setChannelState(ChannelState.JOINED);
             if (channelStats.getFirstJoined() == null) {
                 Date d = new Date();
                 channelStats.setLastWriter(getName());
@@ -313,7 +353,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             }
 
         } else {
-            boolean doJoin = channelPropertyService.getChannelPropertyAsBoolean(channel, PropertyName.PROP_CHANNEL_DO_JOIN_MESSAGE, false);
+// TODO            boolean doJoin = channelPropertyService.getChannelPropertyAsBoolean(channel, PropertyName.PROP_CHANNEL_DO_JOIN_MESSAGE, false);
 /* TODO
        String message = userChannel.getJoinComment();
         if (message != null && message.length() > 0) {
@@ -400,11 +440,13 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     private boolean isBotOp(Channel channel) {
-        for (JoinedUser user : joinedUsersService.findJoinedUsers(channel)) {
+/*        for (JoinedUser user : joinedUsersService.findJoinedUsers(channel)) {
             if (user.getUser().getNick().equalsIgnoreCase(getName())) {
                 return user.isOp();
             }
         }
+        TODO
+        */
         return false;
     }
 
@@ -424,13 +466,13 @@ public class HokanCore extends PircBot implements HokanCoreService {
             }
         }
 
-        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getName(), "@privmsg", sender, login, hostname, message);
+        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getNetworkName(), "@privmsg", sender, login, hostname, message);
         ircEvent.setOriginal(original);
         ircEvent.setPrivate(true);
 
         Network nw = getNetwork();
         nw.addToLinesReceived(1);
-        this.networkService.save(nw);
+// TODO        this.networkService.save(nw);
 
         User user = getUser(ircEvent);
 
@@ -465,26 +507,27 @@ public class HokanCore extends PircBot implements HokanCoreService {
             message = message.replaceFirst(toMe, "");
             isToMe = true;
         }
-        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getName(), channel, sender, login, hostname, message);
+        IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getNetworkName(), channel, sender, login, hostname, message);
         ircEvent.setOriginal(original);
         ircEvent.setToMe(isToMe);
 
         Network nw = getNetwork();
         nw.addToLinesReceived(1);
-        this.networkService.save(nw);
+// TODO        this.networkService.save(nw);
 
         User user = getUser(ircEvent);
         Channel ch = getChannel(ircEvent);
         ircEvent.setBotOp(isBotOp(ch));
 
-        ChannelStats channelStats = channelStatsService.findFirstByChannel(ch);
+/*        ChannelStats channelStats = channelStatsService.findFirstByChannel(ch);
         if (channelStats == null) {
             channelStats = new ChannelStats();
             channelStats.setChannel(ch);
         }
+        TODO
+*/
 
-
-        String lastWriter = channelStats.getLastWriter();
+/*        String lastWriter = channelStats.getLastWriter();
         if (lastWriter != null && lastWriter.equalsIgnoreCase(sender)) {
             int spree = channelStats.getLastWriterSpree();
             spree++;
@@ -498,21 +541,22 @@ public class HokanCore extends PircBot implements HokanCoreService {
         }
 
         channelStats.setLastActive(new Date());
-//        channelStats.setLastMessage(ircEvent.getMessage()); TODO ?
         channelStats.setLastWriter(ircEvent.getSender());
         channelStats.addToLinesReceived(1);
 
         channelStatsService.save(channelStats);
+        TODO
+*/
 
-        UserChannel userChannel = userChannelService.getUserChannel(user, ch);
+        UserChannel userChannel = null; // TODO userChannelService.getUserChannel(user, ch);
         if (userChannel == null) {
-            userChannel = new UserChannel(user, ch);
+// TODO            userChannel = new UserChannel(user, ch);
         }
         userChannel.setLastIrcLogID(ircLog.getId() + "");
         userChannel.setLastMessageTime(new Date());
         userChannelService.save(userChannel);
 
-        boolean wlt = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_WHOLELINE_TRICKERS, false);
+        boolean wlt = false; // TODO channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_WHOLELINE_TRICKERS, false);
         if (wlt || ircEvent.isToMe()) {
             WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this);
             wholeLineTrickers.checkWholeLineTrigger(ircEvent);
@@ -717,7 +761,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             if (!response.isNoSearchReplace()) {
                 if (!response.getIrcMessageEvent().isPrivate()) {
                     Channel ch = getChannel(response.getIrcMessageEvent().getChannel());
-                    doSr = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_SEARCH_REPLACE, false);
+// TODO                    doSr = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_SEARCH_REPLACE, false);
                 }
             }
             handleSendMessage(channel, message, doSr,
@@ -758,7 +802,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (postfix == null) {
             postfix = "";
         }
-        boolean bbMode = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_BB_MODE, false);
+        boolean bbMode = false; // TODO channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_BB_MODE, false);
         if (bbMode) {
             int rnd = 1 + (int) (Math.random() * 100);
             if (rnd > 75) {
@@ -790,7 +834,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (stats != null && ch != null) {
             this.channelStatsService.save(stats);
         }
-        this.networkService.save(nw);
+// TODO        this.networkService.save(nw);
     }
 
 }

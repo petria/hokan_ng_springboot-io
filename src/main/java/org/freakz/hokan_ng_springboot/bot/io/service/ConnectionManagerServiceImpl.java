@@ -1,16 +1,17 @@
 package org.freakz.hokan_ng_springboot.bot.io.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.freakz.hokan_ng_springboot.bot.common.enums.ChannelStartupState;
 import org.freakz.hokan_ng_springboot.bot.common.enums.CommandLineArgs;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.models.dto.IrcServerConfig;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
@@ -81,7 +82,7 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         List<IrcServerConfig> servers = ircServerConfigService.findAll();
         configuredServers = new HashMap<>();
         for (IrcServerConfig server : servers) {
-            configuredServers.put(server.getNetwork().getName(), server);
+            configuredServers.put(server.getNetwork().getNetworkName(), server);
         }
     }
 
@@ -117,14 +118,14 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         if (configuredServer == null) {
             throw new HokanServiceException("IrcServerConfig not found for network: " + network);
         }
-        configuredServer.setIrcServerConfigState(IrcServerConfigState.CONNECTED);
+        configuredServer.setConnected(true);
         this.ircServerConfigService.save(configuredServer);
 
         Connector connector;
-        connector = this.connectors.get(configuredServer.getNetwork().getName());
+        connector = this.connectors.get(configuredServer.getNetwork().getNetworkName());
         if (connector == null) {
             connector = context.getBean(AsyncConnector.class);
-            this.connectors.put(configuredServer.getNetwork().getName(), connector);
+            this.connectors.put(configuredServer.getNetwork().getNetworkName(), connector);
             connector.connect(this.botNick, this, configuredServer);
         } else {
             throw new HokanServiceException("Going online attempt already going: " + configuredServer.getNetwork());
@@ -166,7 +167,7 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
 
     @Override
     public void engineConnectorTooManyConnectAttempts(Connector connector, IrcServerConfig configuredServer) {
-        this.connectors.remove(configuredServer.getNetwork().getName());
+        this.connectors.remove(configuredServer.getNetwork().getNetworkName());
         log.info("Too many connection attempts:" + connector);
     }
 
@@ -200,10 +201,10 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
     }
 
     private void joinChannels(HokanCore engine, Network network) {
-/*        List<Channel> channels = this.channelService.findAll();
+        List<Channel> channels = this.channelService.findAll();
         if (channels != null) {
             for (Channel channelToJoin : channels) {
-                if (channelToJoin.getNetwork().getName().equals(network.getName())) {
+                if (channelToJoin.getNetwork().getNetworkName().equals(network.getName())) {
                     if (channelToJoin.getChannelStartupState() == ChannelStartupState.JOIN) {
                         log.info("--> joining to {}", channelToJoin.getChannelName());
                         engine.joinChannel(channelToJoin.getChannelName());
@@ -213,8 +214,6 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
         } else {
             log.info("NO channels to join: {} -> {}", engine, network);
         }
-        TODO
-        */
     }
 
     @Override
