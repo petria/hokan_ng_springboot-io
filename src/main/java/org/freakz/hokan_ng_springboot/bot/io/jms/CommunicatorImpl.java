@@ -93,7 +93,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
                         splitEvent.setMessage(trimmed);
                         if (trimmed.startsWith("!")) {
                             log.debug("Sending to engine: {}", trimmed);
-                            jmsSender.send(HokanModule.HokanEngine.getQueueName(), "EVENT", splitEvent, false);
+                            jmsSender.send(HokanModule.HokanIo, HokanModule.HokanEngine.getQueueName(), "EVENT", splitEvent, false);
                         } else {
                             log.debug("Not a command: {}", trimmed);
                         }
@@ -101,7 +101,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
                 } else {
                     if (event.getMessage().startsWith("!")) {
                         log.debug("Sending to engine: {}", message);
-                        jmsSender.send(HokanModule.HokanEngine.getQueueName(), "EVENT", event, false);
+                        jmsSender.send(HokanModule.HokanIo, HokanModule.HokanEngine.getQueueName(), "EVENT", event, false);
                     } else {
                         log.debug("Not a command: {}", message);
                     }
@@ -119,7 +119,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
     public void sendServiceRequest(IrcMessageEvent ircEvent, ServiceRequestType requestType) {
         ServiceRequest request = new ServiceRequest(requestType, ircEvent, new CommandArgs(ircEvent.getMessage()), (Object[]) null);
         try {
-            jmsSender.send(HokanModule.HokanServices.getQueueName(), "SERVICE_REQUEST", request, false);
+            jmsSender.send(HokanModule.HokanIo, HokanModule.HokanServices.getQueueName(), "SERVICE_REQUEST", request, false);
         } catch (Exception e) {
             log.error("error", e);
         }
