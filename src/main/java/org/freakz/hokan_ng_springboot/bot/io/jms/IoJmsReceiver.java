@@ -1,6 +1,7 @@
 package org.freakz.hokan_ng_springboot.bot.io.jms;
 
 import lombok.extern.slf4j.Slf4j;
+import org.freakz.hokan_ng_springboot.bot.common.enums.HokanModule;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
 import org.freakz.hokan_ng_springboot.bot.common.jms.JmsEnvelope;
@@ -26,7 +27,7 @@ public class IoJmsReceiver extends SpringJmsReceiver {
 
     @Override
     public String getDestinationName() {
-        return "HokanNGIoQueue";
+        return HokanModule.HokanIo.getQueueName();
     }
 
     @Override
