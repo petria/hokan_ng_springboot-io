@@ -2,9 +2,10 @@
 
  == BOT MODULES
 
-   Bot is divided in three modules
+   Bot is divided in modules
 
     - HokanIO
+    - HokanIOXMPP
     - HokanEngine
     - HokanServices
 
@@ -15,7 +16,7 @@
        |------- ActiveMQ ----------|
        |            |              |
        |           JMS             |
-       |            |              |
+  HokanIOXMPP       |              |
     HokanIO    HokanEngine    HokanServices
        \            |              /
         \           |             /
