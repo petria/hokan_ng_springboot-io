@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator {
+public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator, TelegramCommunicator {
 
     private final AliasService aliasService;
 
@@ -120,6 +120,17 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
         ServiceRequest request = new ServiceRequest(requestType, ircEvent, new CommandArgs(ircEvent.getMessage()), (Object[]) null);
         try {
             jmsSender.send(HokanModule.HokanIo, HokanModule.HokanServices.getQueueName(), "SERVICE_REQUEST", request, false);
+        } catch (Exception e) {
+            log.error("error", e);
+        }
+    }
+
+
+    @Override
+    public void sendTelegramRequest(IrcMessageEvent ircEvent) {
+        try {
+            log.debug("Sending to telegram!");
+            jmsSender.send(HokanModule.HokanIo, HokanModule.HokanIoTelegram.getQueueName(), "IRC_MESSAGE", ircEvent, false);
         } catch (Exception e) {
             log.error("error", e);
         }

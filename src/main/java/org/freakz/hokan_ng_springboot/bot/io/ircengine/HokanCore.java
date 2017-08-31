@@ -39,6 +39,7 @@ import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.EngineConnector;
 import org.freakz.hokan_ng_springboot.bot.io.jms.EngineCommunicator;
 import org.freakz.hokan_ng_springboot.bot.io.jms.ServiceCommunicator;
+import org.freakz.hokan_ng_springboot.bot.io.jms.TelegramCommunicator;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.PircBotUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,9 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
     @Autowired
     private SearchReplaceService searchReplaceService;
+
+    @Autowired
+    private TelegramCommunicator telegramCommunicator;
 
     @Autowired
     private UserService userService;
@@ -562,6 +566,14 @@ public class HokanCore extends PircBot implements HokanCoreService {
         } else {
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
+
+        String telegram = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
+        if (telegram != null) {
+            ircEvent.setParameter(telegram);
+            telegramCommunicator.sendTelegramRequest(ircEvent);
+        }
+
+
     }
 
     private void handleAdminUserToken(IrcMessageEvent ircEvent, User user, PropertyEntity token) {
