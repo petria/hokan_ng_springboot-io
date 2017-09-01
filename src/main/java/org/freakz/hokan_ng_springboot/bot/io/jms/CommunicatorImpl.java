@@ -3,6 +3,7 @@ package org.freakz.hokan_ng_springboot.bot.io.jms;
 import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.enums.HokanModule;
 import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.events.MessageToTelegram;
 import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequest;
 import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
 import org.freakz.hokan_ng_springboot.bot.common.jms.api.JmsSender;
@@ -127,7 +128,7 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
 
 
     @Override
-    public void sendTelegramRequest(IrcMessageEvent ircEvent) {
+    public void sendIrcMessageEventToTelegram(IrcMessageEvent ircEvent) {
         try {
             log.debug("Sending to telegram!");
             jmsSender.send(HokanModule.HokanIo, HokanModule.HokanIoTelegram.getQueueName(), "IRC_MESSAGE", ircEvent, false);
@@ -136,4 +137,15 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
         }
     }
 
+    @Override
+    public void sendMessageToTelegram(String message, String telegramChatId) {
+        MessageToTelegram messageToTelegram = new MessageToTelegram(message, telegramChatId);
+        try {
+            log.debug("Sending to telegram!");
+            jmsSender.send(HokanModule.HokanIo, HokanModule.HokanIoTelegram.getQueueName(), "MESSAGE_TO_TELEGRAM", messageToTelegram, false);
+        } catch (Exception e) {
+            log.error("error", e);
+        }
+
+    }
 }

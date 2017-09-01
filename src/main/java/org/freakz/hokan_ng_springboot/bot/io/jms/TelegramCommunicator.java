@@ -7,6 +7,8 @@ import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
  */
 public interface TelegramCommunicator {
 
-    void sendTelegramRequest(IrcMessageEvent ircMessageEvent);
+    void sendIrcMessageEventToTelegram(IrcMessageEvent ircMessageEvent);
+
+    void sendMessageToTelegram(String message, String telegramChatId);
 
 }

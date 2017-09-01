@@ -570,7 +570,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         String telegram = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
         if (telegram != null) {
             ircEvent.setParameter(telegram);
-            telegramCommunicator.sendTelegramRequest(ircEvent);
+            telegramCommunicator.sendIrcMessageEventToTelegram(ircEvent);
         }
 
 
@@ -817,6 +817,12 @@ public class HokanCore extends PircBot implements HokanCoreService {
         Network nw = getNetwork();
         ChannelStats stats = getChannelStats(ch);
 
+        String telegramId = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
+        boolean sendTelegram = false;
+        if (telegramId != null) {
+            sendTelegram = true;
+        }
+
         String[] lines = message.split("\n");
         for (String line : lines) {
             String[] split = IRCUtility.breakUpMessageByIRCLineLength(channel, line);
@@ -825,6 +831,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
                 String raw = "PRIVMSG " + channel + " :" + msg;
                 this.outputQueue.addLine(raw);
                 this.ircLogService.addIrcLog(new Date(), getNick(), channel, msg);
+                if (sendTelegram) {
+                    String toTelegram = String.format("%s@%s %s", getNick(), channel, msg);
+                    this.telegramCommunicator.sendMessageToTelegram(toTelegram, telegramId);
+                }
                 if (ch != null) {
                     stats.addToLinesSent(1);
                 }
