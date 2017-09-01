@@ -6,8 +6,18 @@ import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
 import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStartupState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.LoggedInUserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserRepositoryService;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
@@ -302,7 +312,11 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
             log.warn("Can't notify, no HokanCore for channel: {}", channel);
             return;
         }
-        core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage());
+        if (notifyRequest.getNotifyType().equals("TELEGRAM_NOTIFY_REQUEST")) {
+            core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage(), true);
+        } else {
+            core.handleSendMessage(channel.getChannelName(), notifyRequest.getNotifyMessage(), false);
+        }
         log.debug("NotifyRequest sent to: {}", channel.getChannelName());
     }
 

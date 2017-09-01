@@ -47,6 +47,7 @@ public class IoJmsReceiver extends SpringJmsReceiver {
 
     private void handleNotify(JmsEnvelope envelope, String payload) {
         NotifyRequest notifyRequest = (NotifyRequest) envelope.getMessageIn().getPayLoadObject(payload);
+        notifyRequest.setNotifyType(payload);
         log.debug("handling NotifyRequest: {}", notifyRequest);
         connectionManagerService.handleNotifyRequest(notifyRequest);
     }

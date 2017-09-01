@@ -781,11 +781,19 @@ public class HokanCore extends PircBot implements HokanCoreService {
         return message;
     }
 
+    public void handleSendMessage(String channel, String message, boolean fromTelegram) {
+        handleSendMessage(channel, message, false, null, null, true);
+    }
+
     public void handleSendMessage(String channel, String message) {
         handleSendMessage(channel, message, false, null, null);
     }
 
     public void handleSendMessage(String channel, String message, boolean doSr, String prefix, String postfix) {
+        handleSendMessage(channel, message, doSr, prefix, postfix, false);
+    }
+
+    public void handleSendMessage(String channel, String message, boolean doSr, String prefix, String postfix, boolean fromTelegram) {
 
         if (doSr) {
             message = handleSearchReplace(message);
@@ -818,8 +826,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         String telegramId = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
         boolean sendTelegram = false;
-        if (telegramId != null) {
-            sendTelegram = true;
+        if (!fromTelegram) {
+            if (telegramId != null) {
+                sendTelegram = true;
+            }
         }
 
         String[] lines = message.split("\n");
