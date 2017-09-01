@@ -824,16 +824,16 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         String[] lines = message.split("\n");
         for (String line : lines) {
+            if (sendTelegram) {
+                String toTelegram = String.format("%s@%s %s", getNick(), channel, line);
+                this.telegramCommunicator.sendMessageToTelegram(toTelegram, telegramId);
+            }
             String[] split = IRCUtility.breakUpMessageByIRCLineLength(channel, line);
             for (String l : split) {
                 String msg = prefix + l + postfix;
                 String raw = "PRIVMSG " + channel + " :" + msg;
                 this.outputQueue.addLine(raw);
                 this.ircLogService.addIrcLog(new Date(), getNick(), channel, msg);
-                if (sendTelegram) {
-                    String toTelegram = String.format("%s@%s %s", getNick(), channel, msg);
-                    this.telegramCommunicator.sendMessageToTelegram(toTelegram, telegramId);
-                }
                 if (ch != null) {
                     stats.addToLinesSent(1);
                 }
