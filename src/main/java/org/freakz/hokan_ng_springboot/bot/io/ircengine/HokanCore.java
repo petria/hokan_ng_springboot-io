@@ -560,19 +560,18 @@ public class HokanCore extends PircBot implements HokanCoreService {
         }
         this.channelService.save(ch);
 
-        boolean ignore = accessControlService.hasUserFlag(user, UserFlag.IGNORE_ON_CHANNEL);
-        if (ignore) {
-            log.debug("Ignoring: {}", user);
-        } else {
-            String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
-        }
-
         String telegram = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
         if (telegram != null) {
             ircEvent.setParameter(telegram);
             telegramCommunicator.sendIrcMessageEventToTelegram(ircEvent);
         }
 
+        boolean ignore = accessControlService.hasUserFlag(user, UserFlag.IGNORE_ON_CHANNEL);
+        if (ignore) {
+            log.debug("Ignoring: {}", user);
+        } else {
+            String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
+        }
 
     }
 
