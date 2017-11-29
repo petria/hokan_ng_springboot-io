@@ -80,11 +80,11 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
     public String sendToEngine(IrcMessageEvent event, UserChannel userChannel) {
         if (event.getMessage().length() > 0) {
             try {
-                boolean repeatAlias = isLastCommandRepeatAlias(event, userChannel);
+//                boolean repeatAlias = isLastCommandRepeatAlias(event, userChannel);
                 boolean aliased = resolveAlias(event);
                 String message = event.getMessage();
                 boolean between = StringStuff.isInBetween(message, "&&", ' ');
-                log.info("Aliased: {} - RepeatAlias: {} - between = {}", aliased, repeatAlias, between);
+                log.info("Aliased: {} - RepeatAlias: {} - between = {}", aliased, between);
                 if (!message.startsWith("!alias") && between) {
                     String[] split = message.split("&&");
                     for (String splitted : split) {
