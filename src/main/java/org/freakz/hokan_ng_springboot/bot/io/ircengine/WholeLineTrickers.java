@@ -1,13 +1,20 @@
 package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcLog;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcLogService;
+import org.freakz.hokan_ng_springboot.bot.common.models.StartAndEndTime;
 import org.freakz.hokan_ng_springboot.bot.common.util.StringStuff;
 import org.freakz.hokan_ng_springboot.bot.common.util.Uptime;
 import org.jibble.pircbot.Colors;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * User: petria
@@ -17,9 +24,11 @@ import java.util.GregorianCalendar;
 class WholeLineTrickers {
 
     private HokanCore core;
+    private IrcLogService ircLogService;
 
-    WholeLineTrickers(HokanCore hokanCore) {
+    WholeLineTrickers(HokanCore hokanCore, IrcLogService ircLogService) {
         this.core = hokanCore;
+        this.ircLogService = ircLogService;
     }
 
     private String _olpo = "";
@@ -138,10 +147,47 @@ class WholeLineTrickers {
         }
     }
 
+    public String getRandomSentence(String channel) {
+        int startRnd = 1 + (int) (Math.random() * 3);
+        LocalDateTime now = LocalDateTime.now(); //LocalDateTime.of(2017,11, 22, 17, 0);
+        StartAndEndTime between = new StartAndEndTime(now.minusDays(startRnd), now.minusDays(startRnd - 3));
+        final List<IrcLog> logs = ircLogService.findByTimeStampBetweenAndTargetContaining(between, channel);
+        List<String> allSentences = new ArrayList<>();
+        for (IrcLog log : logs) {
+            String message = log.getMessage();
+            final String[] split = message.split("[,.!?]");
+
+            Collections.addAll(allSentences, split);
+        }
+        Collections.shuffle(allSentences);
+        String ss = "";
+        for (int i = 0; i < startRnd + 2; i++) {
+            if (i > 0) {
+                ss += ", ";
+            }
+            String some = allSentences.get(i);
+            if (some.length() == 0) {
+                continue;
+            }
+            String ää1 = "Ã¤";
+            String öö1 = "Ã¶";
+            String s = some.replaceAll("ï¿½", "ä");
+            s = s.replaceAll(ää1, "ä");
+            s = s.replaceAll(öö1, "ö");
+            ss += s;
+        }
+
+        return ss;
+    }
 
     private void checkJospa(IrcMessageEvent iEvent) {
         if (iEvent.getMessage().startsWith("jospa")) {
             String rndWord = "joo"; // TODO ChannelLogger.getInstance().getRandomWord();
+            try {
+                rndWord = getRandomSentence(iEvent.getChannel());
+            } catch (Exception e) {
+                //
+            }
             String reply = "Jospa " + rndWord;
             processReply(iEvent, _olpo + reply);
         }
