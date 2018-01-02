@@ -169,6 +169,9 @@ class WholeLineTrickers {
             if (some.length() == 0) {
                 continue;
             }
+            if (some.equals("http")) {
+                continue;
+            }
             String ää1 = "Ã¤";
             String öö1 = "Ã¶";
             String s = some.replaceAll("ï¿½", "ä");
