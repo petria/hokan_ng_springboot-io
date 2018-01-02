@@ -781,12 +781,20 @@ public class HokanCore extends PircBot implements HokanCoreService {
         return message;
     }
 
+    private boolean hasChannelSearchReplace(String channelName) {
+        final Channel channel = getChannel(channelName);
+        if (channel != null) {
+            return channelPropertyService.getChannelPropertyAsBoolean(channel, PropertyName.PROP_CHANNEL_DO_SEARCH_REPLACE, false);
+        }
+        return false;
+    }
+
     public void handleSendMessage(String channel, String message, boolean fromTelegram) {
-        handleSendMessage(channel, message, false, null, null, true);
+        handleSendMessage(channel, message, hasChannelSearchReplace(channel), null, null, true);
     }
 
     public void handleSendMessage(String channel, String message) {
-        handleSendMessage(channel, message, false, null, null);
+        handleSendMessage(channel, message, hasChannelSearchReplace(channel), null, null);
     }
 
     public void handleSendMessage(String channel, String message, boolean doSr, String prefix, String postfix) {
