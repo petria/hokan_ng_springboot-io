@@ -345,7 +345,7 @@ class WholeLineTrickers {
         long now = new Date().getTime();
         long diff = now - _lastReply;
 
-        checkJospa(iEvent);
+//        checkJospa(iEvent);
         checkPerkeleVittu(iEvent);
         checkJoulu(iEvent);
         checkJuhannus(iEvent);
