@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.freakz</groupId>
             <artifactId>hokan_ng_springboot-common</artifactId>
-            <version>1.0.3-final</version>
+            <version>1.0.4-final</version>
         </dependency>
 
 
