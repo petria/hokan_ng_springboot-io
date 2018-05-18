@@ -1,6 +1,5 @@
 package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
-import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
 import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
@@ -42,6 +41,8 @@ import org.freakz.hokan_ng_springboot.bot.io.jms.ServiceCommunicator;
 import org.freakz.hokan_ng_springboot.bot.io.jms.TelegramCommunicator;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.PircBotUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -62,8 +63,9 @@ import java.util.regex.Pattern;
  */
 @Component
 @Scope("prototype")
-@Slf4j
 public class HokanCore extends PircBot implements HokanCoreService {
+
+    private static final Logger log = LoggerFactory.getLogger(HokanCore.class);
 
     @Autowired
     private AccessControlService accessControlService;

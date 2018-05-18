@@ -1,10 +1,11 @@
 package org.freakz.hokan_ng_springboot.bot.io;
 
 import ch.qos.logback.classic.Level;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.freakz.hokan_ng_springboot.bot.common.enums.CommandLineArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +22,9 @@ import java.util.Map;
 @EnableAutoConfiguration
 @EnableJms
 @ComponentScan({"org.freakz.hokan_ng_springboot.bot"})
-@Slf4j
 public class HokanNgSpringBootIo {
+
+    private static final Logger log = LoggerFactory.getLogger(HokanNgSpringBootIo.class);
 
     private static String JMS_BROKER_URL = "tcp://localhost:61616";
 

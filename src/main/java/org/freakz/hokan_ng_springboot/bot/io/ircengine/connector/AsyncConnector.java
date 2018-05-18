@@ -1,12 +1,13 @@
 package org.freakz.hokan_ng_springboot.bot.io.ircengine.connector;
 
-import lombok.extern.slf4j.Slf4j;
 import org.freakz.hokan_ng_springboot.bot.common.cmdpool.CommandPool;
 import org.freakz.hokan_ng_springboot.bot.common.cmdpool.CommandRunnable;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
 import org.jibble.pircbot.NickAlreadyInUseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,11 +20,11 @@ import java.net.InetAddress;
  *
  * @author Petri Airio (petri.j.airio@gmail.com)
  */
-@Slf4j
 @Component
 @Scope("prototype")
 public class AsyncConnector implements Connector, CommandRunnable {
 
+    private static final Logger log = LoggerFactory.getLogger(AsyncConnector.class);
 
     private HokanCore engine = null;
 
