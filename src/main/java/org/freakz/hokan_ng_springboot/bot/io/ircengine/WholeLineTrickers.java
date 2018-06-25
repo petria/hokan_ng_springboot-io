@@ -127,8 +127,8 @@ class WholeLineTrickers {
 
             GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
             cal.set(Calendar.MONTH, Calendar.JUNE);
-            cal.set(Calendar.DAY_OF_MONTH, 22);
-            cal.set(Calendar.YEAR, 2018);
+            cal.set(Calendar.DAY_OF_MONTH, 21);
+            cal.set(Calendar.YEAR, 2019);
             cal.set(Calendar.HOUR_OF_DAY, 12);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
