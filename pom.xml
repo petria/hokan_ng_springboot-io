@@ -11,17 +11,9 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.13.RELEASE</version>
+        <version>2.0.4.RELEASE</version>
         <relativePath/>
     </parent>
-
-    <repositories>
-        <repository>
-            <id>hokannew</id>
-            <name>hokannew-releases</name>
-            <url>http://artifactory.airiot.fi/artifactory/libs-release-local</url>
-        </repository>
-    </repositories>
 
     <scm>
         <url>https://github.com/petria/hokan_ng_springboot-io</url>
@@ -38,7 +30,7 @@
 
         <start-class>org.freakz.hokan_ng_springboot.bot.io.HokanNgSpringBootIo</start-class>
 
-        <java.version>1.8</java.version>
+        <java.version>10</java.version>
         <jsoup.version>1.9.2</jsoup.version>
         <logback.version>1.1.9</logback.version>
         <lombok.version>1.16.12</lombok.version>
@@ -78,7 +70,7 @@
         <dependency>
             <groupId>org.freakz</groupId>
             <artifactId>hokan_ng_springboot-common</artifactId>
-            <version>1.0.4-final</version>
+            <version>2.0.0-final</version>
         </dependency>
 
 
