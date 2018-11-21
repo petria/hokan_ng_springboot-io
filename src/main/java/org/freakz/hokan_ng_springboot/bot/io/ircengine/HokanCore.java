@@ -1,36 +1,10 @@
 package org.freakz.hokan_ng_springboot.bot.io.ircengine;
 
 import org.freakz.hokan_ng_springboot.bot.common.core.HokanCoreService;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineMethodCall;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcEvent;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcEventFactory;
-import org.freakz.hokan_ng_springboot.bot.common.events.IrcMessageEvent;
-import org.freakz.hokan_ng_springboot.bot.common.events.ServiceRequestType;
+import org.freakz.hokan_ng_springboot.bot.common.events.*;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStats;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcLog;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.JoinedUser;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyEntity;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.SearchReplace;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.User;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserChannel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.UserFlag;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelPropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelStatsService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcLogService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.JoinedUserService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.SearchReplaceService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserService;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
 import org.freakz.hokan_ng_springboot.bot.common.service.AccessControlService;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.IRCUtility;
@@ -48,13 +22,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -470,7 +438,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         User user = getUser(ircEvent);
 
-        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
         if (accessControlService.isAdminUser(user)) {
             handleBuiltInCommands(ircEvent);
         }
@@ -483,6 +450,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (ignore) {
             log.debug("Ignoring: {}", user);
         } else {
+            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
             Channel channel = getChannel(ircEvent);
             UserChannel userChannel = getUserChannel(user, channel, ircLog);
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
@@ -555,7 +523,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
             WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this, ircLogService);
             wholeLineTrickers.checkWholeLineTrigger(ircEvent);
         }
-        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
 
         if (accessControlService.isAdminUser(user)) {
             handleBuiltInCommands(ircEvent);
@@ -572,6 +539,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (ignore) {
             log.debug("Ignoring: {}", user);
         } else {
+            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
