@@ -482,6 +482,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         User user = getUser(ircEvent);
         Channel ch = getChannel(ircEvent);
         ircEvent.setBotOp(isBotOp(ch));
+        ircEvent.setChannelId(ch.getId());
 
         ChannelStats channelStats = channelStatsService.findFirstByChannel(ch);
         if (channelStats == null) {
@@ -520,8 +521,9 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
         boolean wlt = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_WHOLELINE_TRICKERS, false);
         if (wlt || ircEvent.isToMe()) {
-            WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this, ircLogService);
-            wholeLineTrickers.checkWholeLineTrigger(ircEvent);
+            sendWholeLineTriggerRequest(ircEvent);
+//            WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this, ircLogService);
+//            wholeLineTrickers.checkWholeLineTrigger(ircEvent);
         }
 
         if (accessControlService.isAdminUser(user)) {
@@ -543,6 +545,11 @@ public class HokanCore extends PircBot implements HokanCoreService {
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
+    }
+
+    private void sendWholeLineTriggerRequest(IrcMessageEvent ircEvent) {
+        log.debug("ServiceRequestType.WHOLE_LINE_TRIGGER");
+        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.WHOLE_LINE_TRIGGER);
     }
 
     private void handleAdminUserToken(IrcMessageEvent ircEvent, User user, PropertyEntity token) {

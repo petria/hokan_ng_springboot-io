@@ -44,6 +44,8 @@ public class IoJmsReceiver extends SpringJmsReceiver {
             handleNotify(envelope, "STATS_NOTIFY_REQUEST");
         } else if (envelope.getMessageIn().getPayLoadObject("URLS_NOTIFY_REQUEST") != null) {
             handleNotify(envelope, "URLS_NOTIFY_REQUEST");
+        } else if (envelope.getMessageIn().getPayLoadObject("WHOLE_LINE_TRIGGER_NOTIFY_REQUEST") != null) {
+            handleNotify(envelope, "WHOLE_LINE_TRIGGER_NOTIFY_REQUEST");
         }
     }
 
