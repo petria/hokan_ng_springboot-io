@@ -462,7 +462,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
     @Override
     protected void onMessage(String channel, String sender, String login, String hostname, String message,
                              byte[] original) {
-        IrcLog ircLog = this.ircLogService.addIrcLog(new Date(), sender, channel, message);
+//        IrcLog ircLog = this.ircLogService.addIrcLog(new Date(), sender, channel, message);
         String toMe = String.format("%s: ", getName());
         boolean isToMe = false;
         if (message.startsWith(toMe)) {
@@ -477,7 +477,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), nw.getName(), channel, sender, login, hostname, message);
         ircEvent.setOriginal(original);
         ircEvent.setToMe(isToMe);
-
+        sendIrcChannelLogRequest(ircEvent);
 
         User user = getUser(ircEvent);
         Channel ch = getChannel(ircEvent);
@@ -515,7 +515,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (userChannel == null) {
             userChannel = new UserChannel(user, ch);
         }
-        userChannel.setLastIrcLogID(ircLog.getId() + "");
+//        userChannel.setLastIrcLogID(ircLog.getId() + "");
         userChannel.setLastMessageTime(new Date());
         userChannelService.save(userChannel);
 
@@ -550,6 +550,11 @@ public class HokanCore extends PircBot implements HokanCoreService {
     private void sendWholeLineTriggerRequest(IrcMessageEvent ircEvent) {
         log.debug("ServiceRequestType.WHOLE_LINE_TRIGGER");
         serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.WHOLE_LINE_TRIGGER);
+    }
+
+    private void sendIrcChannelLogRequest(IrcMessageEvent ircEvent) {
+        log.debug("ServiceRequestType.IRC_CHANNEL_LOG_REQUEST");
+        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.IRC_CHANNEL_LOG_REQUEST);
     }
 
     private void handleAdminUserToken(IrcMessageEvent ircEvent, User user, PropertyEntity token) {
