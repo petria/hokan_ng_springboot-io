@@ -515,15 +515,13 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (userChannel == null) {
             userChannel = new UserChannel(user, ch);
         }
-//        userChannel.setLastIrcLogID(ircLog.getId() + "");
+
         userChannel.setLastMessageTime(new Date());
         userChannelService.save(userChannel);
 
         boolean wlt = channelPropertyService.getChannelPropertyAsBoolean(ch, PropertyName.PROP_CHANNEL_DO_WHOLELINE_TRICKERS, false);
         if (wlt || ircEvent.isToMe()) {
             sendWholeLineTriggerRequest(ircEvent);
-//            WholeLineTrickers wholeLineTrickers = new WholeLineTrickers(this, ircLogService);
-//            wholeLineTrickers.checkWholeLineTrigger(ircEvent);
         }
 
         if (accessControlService.isAdminUser(user)) {
@@ -833,9 +831,19 @@ public class HokanCore extends PircBot implements HokanCoreService {
                 String msg = prefix + l + postfix;
                 String raw = "PRIVMSG " + channel + " :" + msg;
                 this.outputQueue.addLine(raw);
-                this.ircLogService.addIrcLog(new Date(), getNick(), channel, msg);
+
                 if (ch != null) {
                     stats.addToLinesSent(1);
+                    IrcMessageEvent ircMessageEvent = new IrcMessageEvent();
+                    ircMessageEvent.setSender(getNick());
+                    ircMessageEvent.setChannel(ch.getChannelName());
+                    ircMessageEvent.setNetwork(nw.getName());
+                    ircMessageEvent.setMessage(msg);
+                    try {
+                        sendIrcChannelLogRequest(ircMessageEvent);
+                    } catch (Exception e) {
+                        log.error("logging error!", e);
+                    }
                 }
                 nw.addToLinesSent(1);
             }
