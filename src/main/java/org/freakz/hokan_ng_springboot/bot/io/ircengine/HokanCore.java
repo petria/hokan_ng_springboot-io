@@ -51,9 +51,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
     private EngineCommunicator engineCommunicator;
 
     @Autowired
-    private IrcLogService ircLogService;
-
-    @Autowired
     private JoinedUserService joinedUsersService;
 
     @Autowired
@@ -182,10 +179,10 @@ public class HokanCore extends PircBot implements HokanCoreService {
         return channelStats;
     }
 
-    public UserChannel getUserChannel(User user, Channel channel, IrcLog ircLog) {
+    public UserChannel getUserChannel(User user, Channel channel) {
         UserChannel userChannel = userChannelService.getUserChannel(user, channel);
         if (userChannel == null) {
-            userChannel = userChannelService.createUserChannel(user, channel, ircLog);
+            userChannel = userChannelService.createUserChannel(user, channel);
         }
         return userChannel;
     }
@@ -419,7 +416,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
     @Override
     protected void onPrivateMessage(String sender, String login, String hostname, String message, byte[] original) {
-        IrcLog ircLog = ircLogService.addIrcLog(new Date(), sender, getName(), message);
         int confirmLong = propertyService.getPropertyAsInt(PropertyName.PROP_SYS_CONFIRM_LONG_MESSAGES, -1);
         if (confirmLong > 0) {
             if (handleConfirmMessages(sender, message)) {
@@ -431,6 +427,8 @@ public class HokanCore extends PircBot implements HokanCoreService {
         IrcMessageEvent ircEvent = (IrcMessageEvent) IrcEventFactory.createIrcMessageEvent(getName(), getNetwork().getName(), "@privmsg", sender, login, hostname, message);
         ircEvent.setOriginal(original);
         ircEvent.setPrivate(true);
+
+        sendIrcChannelLogRequest(ircEvent);
 
         Network nw = getNetwork();
         nw.addToLinesReceived(1);
@@ -452,7 +450,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         } else {
             serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
             Channel channel = getChannel(ircEvent);
-            UserChannel userChannel = getUserChannel(user, channel, ircLog);
+            UserChannel userChannel = getUserChannel(user, channel);
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 

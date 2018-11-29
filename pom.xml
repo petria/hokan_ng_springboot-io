@@ -34,6 +34,10 @@
         <jsoup.version>1.9.2</jsoup.version>
         <logback.version>1.1.9</logback.version>
         <lombok.version>1.16.12</lombok.version>
+
+        <hokan.common.version>2.0.2-final</hokan.common.version>
+        <hokan.custom.version>2.0.0-final</hokan.custom.version>
+
     </properties>
 
     <dependencies>
@@ -70,14 +74,14 @@
         <dependency>
             <groupId>org.freakz</groupId>
             <artifactId>hokan_ng_springboot-common</artifactId>
-            <version>2.0.1-final</version>
+            <version>${hokan.common.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.freakz</groupId>
             <artifactId>hokan_ng_springboot-custom</artifactId>
-            <version>2.0.0-final</version>
+            <version>${hokan.custom.version}</version>
         </dependency>
 
         <dependency>
