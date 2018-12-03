@@ -35,7 +35,7 @@
         <logback.version>1.1.9</logback.version>
         <lombok.version>1.16.12</lombok.version>
 
-        <hokan.common.version>2.0.2-final</hokan.common.version>
+        <hokan.common.version>2.0.3-final</hokan.common.version>
         <hokan.custom.version>2.0.0-final</hokan.custom.version>
 
     </properties>
