@@ -528,7 +528,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
         this.channelService.save(ch);
 
         String telegram = channelPropertyService.getChannelPropertyAsString(ch, PropertyName.PROP_CHANNEL_TELEGRAM_LINK, null);
-        if (telegram != null) {
+        if (telegram != null && !telegram.equals("n/a")) {
             ircEvent.setParameter(telegram);
             telegramCommunicator.sendIrcMessageEventToTelegram(ircEvent);
         }
