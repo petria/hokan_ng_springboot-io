@@ -541,6 +541,9 @@ public class HokanCore extends PircBot implements HokanCoreService {
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
+        serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.GLUGGA_COUNT_REQUEST);
+
+
     }
 
     private void sendWholeLineTriggerRequest(IrcMessageEvent ircEvent) {
