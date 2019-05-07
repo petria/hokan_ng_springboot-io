@@ -34,6 +34,7 @@ public class IoJmsReceiver extends SpringJmsReceiver {
 
     @Override
     public void handleJmsEnvelope(JmsEnvelope envelope) throws Exception {
+        log.debug("handle!");
         if (envelope.getMessageIn().getPayLoadObject("ENGINE_RESPONSE") != null) {
             handleEngineReply(envelope);
         } else if (envelope.getMessageIn().getPayLoadObject("TELEGRAM_NOTIFY_REQUEST") != null) {
