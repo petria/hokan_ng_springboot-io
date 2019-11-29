@@ -1,23 +1,16 @@
 package org.freakz.hokan_ng_springboot.bot.io.service;
 
 import org.freakz.hokan_ng_springboot.bot.common.enums.CommandLineArgs;
-import org.freakz.hokan_ng_springboot.bot.common.events.EngineResponse;
-import org.freakz.hokan_ng_springboot.bot.common.events.NotifyRequest;
+import org.freakz.hokan_ng_springboot.bot.common.enums.HokanModule;
+import org.freakz.hokan_ng_springboot.bot.common.events.*;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanException;
 import org.freakz.hokan_ng_springboot.bot.common.exception.HokanServiceException;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Channel;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.ChannelStartupState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfig;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.IrcServerConfigState;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.Network;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.ChannelService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.IrcServerConfigService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.LoggedInUserService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.NetworkService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.PropertyService;
-import org.freakz.hokan_ng_springboot.bot.common.jpa.service.UserRepositoryService;
+import org.freakz.hokan_ng_springboot.bot.common.jms.JmsMessage;
+import org.freakz.hokan_ng_springboot.bot.common.jms.api.JmsSender;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.entity.*;
+import org.freakz.hokan_ng_springboot.bot.common.jpa.service.*;
 import org.freakz.hokan_ng_springboot.bot.common.service.ConnectionManagerService;
+import org.freakz.hokan_ng_springboot.bot.common.util.CommandArgs;
 import org.freakz.hokan_ng_springboot.bot.common.util.CommandLineArgsParser;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.HokanCore;
 import org.freakz.hokan_ng_springboot.bot.io.ircengine.connector.AsyncConnector;
@@ -32,6 +25,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -171,12 +166,43 @@ public class ConnectionManagerServiceImpl implements ConnectionManagerService, E
 
     }
 
+    @Autowired
+    private JmsSender jmsSender;
+
+    public ServiceResponse doServicesRequest(ServiceRequestType requestType, IrcMessageEvent ircEvent, Object... parameters) throws HokanException {
+        ServiceRequest request = new ServiceRequest(requestType, ircEvent, new CommandArgs(ircEvent.getMessage()), parameters);
+        ObjectMessage objectMessage = jmsSender.sendAndGetReply(HokanModule.HokanServices.getQueueName(), "SERVICE_REQUEST", request, false);
+        if (objectMessage == null) {
+            throw new HokanException("ServiceResponse null, is Services module running?");
+        }
+        try {
+            JmsMessage jmsMessage = (JmsMessage) objectMessage.getObject();
+            return jmsMessage.getServiceResponse();
+        } catch (JMSException e) {
+            log.error("jms", e);
+        }
+        return new ServiceResponse(requestType);
+
+    }
+
     //	----- EngineConnector
 
     @Override
     public void engineConnectorTooManyConnectAttempts(Connector connector, IrcServerConfig configuredServer) {
         this.connectors.remove(configuredServer.getNetwork().getName());
-        log.info("Too many connection attempts:" + connector);
+
+        String message = ("Too many connection attempts:" + connector);
+        SendSMSRequest smsRequest = new SendSMSRequest();
+        smsRequest.setTarget("3584577345641");
+        smsRequest.setMessage(message);
+        log.info("Sending alert SMS!");
+        IrcMessageEvent ircEvemt = (IrcMessageEvent) IrcEventFactory.createIrcEvent("bot", "dev", "<internal>", "<system>", "login", "localhost");
+        try {
+            ServiceResponse serviceResponse = doServicesRequest(ServiceRequestType.SMS_SEND_SERVICE_REQUEST, ircEvemt, smsRequest);
+        } catch (HokanException e) {
+            log.error("SMS Notify failed!");
+        }
+        log.error(message);
     }
 
     @Override
