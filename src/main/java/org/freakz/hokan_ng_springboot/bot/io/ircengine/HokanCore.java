@@ -501,6 +501,8 @@ public class HokanCore extends PircBot implements HokanCoreService {
             log.debug("Resolver message: {}", ircEvent.getMessage());
             orgEvent.setParameter(ircEvent.getMessage());
             UrlCatchResolvedEvent event = UrlCatchResolvedEvent.builder().url(orgEvent.getMessage()).title(ircEvent.getMessage()).build();
+
+            ircEvent.setChannel(orgEvent.getChannel());
             serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST, event);
         }
 
