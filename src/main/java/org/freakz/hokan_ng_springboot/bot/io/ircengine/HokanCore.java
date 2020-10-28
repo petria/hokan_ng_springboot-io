@@ -23,7 +23,12 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.freakz.hokan_ng_springboot.bot.common.jpa.entity.PropertyName.PROP_SYS_EXT_TITLE_RESOLVER;
 
 /**
  * Created by AirioP on 17.2.2015.
@@ -448,19 +453,73 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (ignore) {
             log.debug("Ignoring: {}", user);
         } else {
-            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
+            catchUrlsWithTitleResolver(ircEvent);
             Channel channel = getChannel(ircEvent);
             UserChannel userChannel = getUserChannel(user, channel);
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
+        String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
+        if (urlTitleResolverNick != null && !urlTitleResolverNick.isEmpty()) {
+            if (sender.toLowerCase().equalsIgnoreCase(urlTitleResolverNick)) {
+                handleTitleResolverReply(urlTitleResolverNick, ircEvent);
+            } else {
+                serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
+            }
+        }
     }
 
+    private void catchUrlsWithTitleResolver(IrcMessageEvent ircEvent) {
+        String msg = ircEvent.getMessage();
+        String regexp = "(https?://|www\\.)\\S+";
+
+        Pattern p = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(msg);
+        while (m.find()) {
+            String url = m.group();
+            sendToResolverNick(ircEvent, url);
+        }
+
+    }
+
+    private AtomicInteger sentCount = new AtomicInteger(0);
+    private AtomicInteger receiveCount = new AtomicInteger(1);
+
+
+    private void handleTitleResolverReply(String urlTitleResolverNick, IrcMessageEvent ircEvent) {
+        Integer count = receiveCount.get();
+        IrcMessageEvent orgEvent = sentCountMap.get(count);
+
+        log.debug("Reply from {} -> count: {} -> orig event: {}", urlTitleResolverNick, count, orgEvent);
+
+        if (orgEvent == null) {
+            log.debug("No matching event: {}", count);
+        } else {
+            orgEvent = sentCountMap.remove(count);
+            receiveCount.addAndGet(1);
+            log.debug("Resolver message: {}", ircEvent.getMessage());
+            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST, ircEvent.getMessage());
+        }
+
+    }
+
+    private Map<Integer, IrcMessageEvent> sentCountMap = new ConcurrentHashMap<>();
+
+    private void sendToResolverNick(IrcMessageEvent ircEvent, String url) {
+        Integer count = sentCount.addAndGet(1);
+        sentCountMap.put(count, ircEvent);
+        String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
+        if (urlTitleResolverNick != null && !urlTitleResolverNick.isEmpty()) {
+            log.debug("Sending url to {} to resolve, count: {} ", urlTitleResolverNick, count);
+//            serviceCommunicator.sendServiceRequest();
+            sendMessage(urlTitleResolverNick, url);
+        }
+    }
 
     @Override
     protected void onMessage(String channel, String sender, String login, String hostname, String message,
                              byte[] original) {
-//        IrcLog ircLog = this.ircLogService.addIrcLog(new Date(), sender, channel, message);
+
         String toMe = String.format("%s: ", getName());
         boolean isToMe = false;
         if (message.startsWith(toMe)) {
@@ -503,7 +562,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
         }
 
         channelStats.setLastActive(new Date());
-//        channelStats.setLastMessage(ircEvent.getMessage()); TODO ?
         channelStats.setLastWriter(ircEvent.getSender());
         channelStats.addToLinesReceived(1);
 
@@ -537,13 +595,12 @@ public class HokanCore extends PircBot implements HokanCoreService {
         if (ignore) {
             log.debug("Ignoring: {}", user);
         } else {
-            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
+            catchUrlsWithTitleResolver(ircEvent);
+//            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
         serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.TOP_COUNT_REQUEST);
-
-
     }
 
     private void sendWholeLineTriggerRequest(IrcMessageEvent ircEvent) {

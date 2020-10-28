@@ -117,15 +117,15 @@ public class CommunicatorImpl implements EngineCommunicator, ServiceCommunicator
         return "not a command";
     }
 
-
     @Override
-    public void sendServiceRequest(IrcMessageEvent ircEvent, ServiceRequestType requestType) {
-        ServiceRequest request = new ServiceRequest(requestType, ircEvent, new CommandArgs(ircEvent.getMessage()), (Object[]) null);
+    public void sendServiceRequest(IrcMessageEvent ircEvent, ServiceRequestType requestType, Object... params) {
+        ServiceRequest request = new ServiceRequest(requestType, ircEvent, new CommandArgs(ircEvent.getMessage()), params);
         try {
             jmsSender.send(HokanModule.HokanIo, HokanModule.HokanServices.getQueueName(), "SERVICE_REQUEST", request, false);
         } catch (Exception e) {
             log.error("error", e);
         }
+
     }
 
 
