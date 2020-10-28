@@ -456,7 +456,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             catchUrlsWithTitleResolver(ircEvent);
             Channel channel = getChannel(ircEvent);
             UserChannel userChannel = getUserChannel(user, channel);
-            String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
+            engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
         String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
@@ -484,6 +484,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
 
     private AtomicInteger sentCount = new AtomicInteger(0);
     private AtomicInteger receiveCount = new AtomicInteger(1);
+    private Map<Integer, IrcMessageEvent> sentCountMap = new ConcurrentHashMap<>();
 
 
     private void handleTitleResolverReply(String urlTitleResolverNick, IrcMessageEvent ircEvent) {
@@ -498,15 +499,17 @@ public class HokanCore extends PircBot implements HokanCoreService {
             orgEvent = sentCountMap.remove(count);
             receiveCount.addAndGet(1);
             log.debug("Resolver message: {}", ircEvent.getMessage());
-            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST, ircEvent.getMessage());
+            orgEvent.setParameter(ircEvent.getMessage());
+            UrlCatchResolvedEvent event = UrlCatchResolvedEvent.builder().url(orgEvent.getMessage()).title(ircEvent.getMessage()).build();
+            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST, event);
         }
 
     }
 
-    private Map<Integer, IrcMessageEvent> sentCountMap = new ConcurrentHashMap<>();
-
     private void sendToResolverNick(IrcMessageEvent ircEvent, String url) {
         Integer count = sentCount.addAndGet(1);
+        ircEvent.setMessage(url);
+        ircEvent.setParameter(url);
         sentCountMap.put(count, ircEvent);
         String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
         if (urlTitleResolverNick != null && !urlTitleResolverNick.isEmpty()) {
