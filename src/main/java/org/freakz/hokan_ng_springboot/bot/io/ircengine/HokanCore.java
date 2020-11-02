@@ -470,14 +470,20 @@ public class HokanCore extends PircBot implements HokanCoreService {
     }
 
     private void catchUrlsWithTitleResolver(IrcMessageEvent ircEvent) {
-        String msg = ircEvent.getMessage();
-        String regexp = "(https?://|www\\.)\\S+";
+        String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
+        log.debug("urlTitleResolverNick: {}", urlTitleResolverNick);
+        if (urlTitleResolverNick != null && !urlTitleResolverNick.isEmpty()) {
+            String msg = ircEvent.getMessage();
+            String regexp = "(https?://|www\\.)\\S+";
 
-        Pattern p = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(msg);
-        while (m.find()) {
-            String url = m.group();
-            sendToResolverNick(ircEvent, url);
+            Pattern p = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(msg);
+            while (m.find()) {
+                String url = m.group();
+                sendToResolverNick(ircEvent, url);
+            }
+        } else {
+            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
         }
 
     }
@@ -516,7 +522,6 @@ public class HokanCore extends PircBot implements HokanCoreService {
         String urlTitleResolverNick = propertyService.getPropertyAsString(PROP_SYS_EXT_TITLE_RESOLVER, null);
         if (urlTitleResolverNick != null && !urlTitleResolverNick.isEmpty()) {
             log.debug("Sending url to {} to resolve, count: {} ", urlTitleResolverNick, count);
-//            serviceCommunicator.sendServiceRequest();
             sendMessage(urlTitleResolverNick, url);
         }
     }
@@ -601,7 +606,7 @@ public class HokanCore extends PircBot implements HokanCoreService {
             log.debug("Ignoring: {}", user);
         } else {
             catchUrlsWithTitleResolver(ircEvent);
-//            serviceCommunicator.sendServiceRequest(ircEvent, ServiceRequestType.CATCH_URLS_REQUEST);
+//
             String result = engineCommunicator.sendToEngine(ircEvent, userChannel);
         }
 
